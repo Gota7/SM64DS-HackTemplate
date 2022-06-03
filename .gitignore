@@ -1,6 +1,7 @@
 # Files and paths to ignore.
 __pycache__
 InstallFiles/tmp
+InstallFiles/toolsInstalled
 Editor
 Base
 Tools
