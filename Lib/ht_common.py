@@ -1,3 +1,4 @@
+import pathlib
 from re import sub
 import urllib.request
 import os
@@ -35,7 +36,8 @@ def download_zip(url, subdir, dest):
     os.mkdir(dest)
     for zip_info in zip.infolist():
         if zip_info.filename.startswith(subdir):
-            zip_info.filename = os.path.basename(zip_info.filename)
+            zip_info.filename = zip_info.filename[len(subdir)+1:]
             if zip_info.filename != "":
+                #pathlib.Path(os.path.join(dest, zip_info.filename)).mkdir(parents=True, exist_ok=True)
                 zip.extract(zip_info, dest)
     zip.close()

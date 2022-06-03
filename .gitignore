@@ -3,4 +3,5 @@ __pycache__
 InstallFiles/tmp
 Editor
 Base
+Tools
 *.nds
