@@ -1,0 +1,6 @@
+# Files and paths to ignore.
+__pycache__
+InstallFiles/tmp
+Editor
+Base
+*.nds
