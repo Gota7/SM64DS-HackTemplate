@@ -9,6 +9,7 @@ def extract_base():
         if not ht_common.user_warn():
             return
         shutil.rmtree("Base")
+    print("Extracting base ROM...")
     ht_common.run_ndst("-e " + os.path.join("..", "Base.nds") + " " + os.path.join("..", "Conversions") + " " + os.path.join("..", "Base"))
 
 # Main method.

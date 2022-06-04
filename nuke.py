@@ -50,7 +50,7 @@ def nuke_asm():
     path = "ASM"
     if os.path.exists(path):
         shutil.rmtree(path)
-    ht_common.download_zip("https://github.com/Gota7/SM64DS-HackTemplate/archive/refs/heads/main.zip", os.path.join("SM64DS-HackTemplate-main", "ASM"), "ASM")
+    ht_common.download_zip("https://github.com/Gota7/SM64DS-HackTemplate/archive/refs/heads/main.zip", "SM64DS-HackTemplate-main/ASM", "ASM")
     print("Nuke: ASM reset.")
 
 # Remove everything.

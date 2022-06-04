@@ -24,7 +24,7 @@ def toolsInstall():
         if os.path.exists("Editor"):
             shutil.rmtree("Editor")
         print("Installing SM64DSe...")
-        ht_common.download_zip("https://github.com/Gota7/SM64DSe-Ultimate/archive/refs/heads/master.zip", os.path.join("SM64DSe-Ultimate-master", "bin", "Release"), "Editor")
+        ht_common.download_zip("https://github.com/Gota7/SM64DSe-Ultimate/archive/refs/heads/master.zip", "SM64DSe-Ultimate-master/bin/Release", "Editor")
         shutil.copyfile(os.path.join("InstallFiles", "obj_list.txt"), os.path.join("Editor", "obj_list.txt"))
         shutil.copyfile(os.path.join("InstallFiles", "objectdb.xml"), os.path.join("Editor", "objectdb.xml"))
     print("SM64DSe installed... OK")
