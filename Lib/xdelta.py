@@ -1,3 +1,8 @@
+#
+# For calling xdelta.
+#   2022 Gota7.
+#
+
 import Lib.ht_common as ht_common
 import os
 

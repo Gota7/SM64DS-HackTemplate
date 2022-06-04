@@ -4,18 +4,21 @@
 #
 
 import Lib.ht_common as ht_common
+from Lib.xdelta import xdelta_apply_patch, xdelta_make_patch
 import nuke
 import os
 from sys import stderr, stdout
 import sys
 from time import sleep
+import zipfile
 
 # Build ROM.
 def build_rom():
-    if not os.path.exists("Base") or not os.path.exists("Conversions") or not os.path.exists(ht_common.get_rom_name()):
+    rom_name = ht_common.get_rom_name()
+    if not os.path.exists("Base") or not os.path.exists("Conversions") or not os.path.exists(rom_name):
         print("ERR: Base ROM and hack folders are not present! Did you run \"setup.py\" first?")
         exit(0)
-    ht_common.run_ndst("-n " + os.path.join("..", "Base") + " " + os.path.join("..", ht_common.get_rom_name()) + " " + os.path.join("..", "Conversions") + " " + os.path.join("..", ht_common.get_rom_name()) + ".nds")
+    ht_common.run_ndst("-n " + os.path.join("..", "Base") + " " + os.path.join("..", rom_name) + " " + os.path.join("..", "Conversions") + " " + os.path.join("..", ht_common.get_rom_name()) + ".nds")
     # Linux hack - use Ndst-Lin.
     if sys.platform == "linux" or sys.platform == "linux2":
         curr_dir = os.getcwd()
@@ -35,9 +38,28 @@ def build_rom():
     if ht_common.get_rom_autostart():
         print("Build: Opening ROM...")
         if sys.platform == "linux" or sys.platform == "linux2":
-            ht_common.call_program_nowine("xdg-open " + ht_common.get_rom_name() + ".nds")
+            ht_common.call_program_nowine("xdg-open " + rom_name + ".nds")
         else:
-            os.startfile(ht_common.get_rom_name() + ".nds")
+            os.startfile(rom_name + ".nds")
+
+# Build xdelta.
+def build_xdelta():
+    if not os.path.exists("EUR.nds"):
+        print("ERR: Original EUR baserom not found!")
+        exit(0)
+    rom_name = ht_common.get_rom_name()
+    xdelta_make_patch("EUR.nds", rom_name + ".nds", rom_name + ".xdelta")
+
+# Ship file.
+def build_ship():
+    build_xdelta()
+    rom_name = ht_common.get_rom_name()
+    zip = zipfile.ZipFile(rom_name + ".zip", "w", zipfile.ZIP_DEFLATED, False)
+    zip.writestr("README.txt", "Instructions:\n1. Open xdeltaUI.exe\n2. For \"Patch\", select " + rom_name + ".xdelta.\n3. For \"Source File\", select an unmodified/unopened with SM64DSe EUR ROM (MD5SUM: 867b3d17ad268e10357c9754a77147e5).\n4. Select what you want for the \"Output File\" (.nds).\n5. Hit Patch!\n\nAlternatively, you can run \"xdelta.exe -d -s EUR.nds" + " " + rom_name + ".xdelta " + rom_name + ".nds\".")
+    zip.write(os.path.join("InstallFiles", "xdelta.exe"), "xdelta.exe")
+    zip.write(os.path.join("InstallFiles", "xdeltaUI.exe"), "xdeltaUI.exe")
+    zip.write(rom_name + ".xdelta", rom_name + ".xdelta")
+    print("Build: Built " + rom_name + ".xdelta and " + rom_name + ".zip.\nSend the ZIP file out to whoever you want to have play!")
 
 # Build ARM9.
 def build_arm9():
@@ -57,11 +79,13 @@ def clean_overlays():
 
 # Build ASM.
 def build_asm():
-    pass
+    build_arm9()
+    build_overlays()
 
 # Clean ASM.
 def clean_asm():
-    pass
+    clean_arm9()
+    clean_overlays()
 
 # Build all.
 def build_all():
@@ -90,6 +114,7 @@ if __name__ == "__main__":
         options.append(disable_msg)
     else:
         options.append(enable_msg)
+    options.append("Ship ROM xdelta and ZIP.")
     options.append("Exit.")
     while opt != len(options):
         sleep(1)
@@ -122,13 +147,15 @@ if __name__ == "__main__":
                     nuke.nuke_build_folder()
                 if spec != 1:
                     build_rom()
-        elif opt == len(options) - 1:
+        elif opt == len(options) - 2:
             if ht_common.get_rom_autostart():
                 os.remove(os.path.join("InstallFiles", "autoBoot"))
-                options[len(options) - 2] = enable_msg
+                options[len(options) - 3] = enable_msg
                 print("Build: ROM autostart disabled.")
             else:
                 file = open(os.path.join("InstallFiles", "autoBoot"), "w")
                 file.close()
-                options[len(options) - 2] = disable_msg
+                options[len(options) - 3] = disable_msg
                 print("Build: ROM autostart enabled.")
+        elif opt == len(options) - 1:
+            build_ship()
