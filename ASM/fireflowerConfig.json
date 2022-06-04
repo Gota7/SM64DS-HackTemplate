@@ -5,12 +5,12 @@
             "include"
         ],
 
-        "source": "source",
-        "filesystem": "data",
-        "output": "SM64DS.nds",
+        "source": "Patches",
+        "filesystem": "fireflower_data/data",
+        "output": "fireflower_data/PatchedBase.nds",
         "toolchain": "toolchain",
-        "build": "build",
-        "backup": "backup",
+        "build": "fireflower_data/build",
+        "backup": "fireflower_data/backup",
 
         "pre-build": "",
         "post-build": "",

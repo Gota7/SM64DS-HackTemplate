@@ -34,7 +34,7 @@ def toolsInstall():
         os.mkdir("Tools")
 
     # Download ARM_GCC.
-    arm_gcc_path = os.path.join("Tools", "ARM_GCC")
+    arm_gcc_path = os.path.join("ASM", "toolchain", "ff-gcc")
     if not os.path.exists(arm_gcc_path) or ht_common.user_yn_prompt("ARM_GCC is already installed, reinstall?"):
         if os.path.exists(arm_gcc_path):
             shutil.rmtree(arm_gcc_path)
@@ -43,13 +43,13 @@ def toolsInstall():
     print("ARM_GCC installed... OK")
 
     # Download fireflower.
-    fireflower_path = os.path.join("Tools", "Fireflower")
+    fireflower_path = os.path.join("ASM", "toolchain", "Fireflower")
     if not os.path.exists(fireflower_path) or ht_common.user_yn_prompt("Fireflower is already installed, reinstall?"):
         if os.path.exists(fireflower_path):
             shutil.rmtree(fireflower_path)
         print("Installing Fireflower...")
         ht_common.download_zip("https://github.com/MammaMiaTeam/Fireflower/releases/download/1.0/fireflower.zip", "", fireflower_path)
-        shutil.copyfile(os.path.join("InstallFiles", "buildroot.txt"), os.path.join("Tools", "Fireflower", "buildroot.txt"))
+        shutil.copyfile(os.path.join("InstallFiles", "buildroot.txt"), os.path.join("ASM", "toolchain", "Fireflower", "buildroot.txt"))
     print("Fireflower installed... OK")
 
     # Tools have been installed.

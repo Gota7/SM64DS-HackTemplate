@@ -7,7 +7,9 @@ InstallFiles/toolsInstalled
 Conversions
 Editor
 Base
-Tools
 *.nds
 build.ninja
 .ninja_log
+ASM/fireflower_data
+ASM/toolchain/ff-gcc
+ASM/toolchain/Fireflower

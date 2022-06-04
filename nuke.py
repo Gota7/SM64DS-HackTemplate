@@ -14,8 +14,10 @@ def nuke_tools():
         os.remove(os.path.join("InstallFiles", "toolsInstalled"))
     if os.path.exists("Editor"):
         shutil.rmtree("Editor")
-    if os.path.exists("Tools"):
-        shutil.rmtree("Tools")
+    if os.path.exists(os.path.join("ASM", "toolchain", "Fireflower")):
+        shutil.rmtree(os.path.join("ASM", "toolchain", "Fireflower"))
+    if os.path.exists(os.path.join("ASM", "toolchain", "ff-gcc")):
+        shutil.rmtree(os.path.join("ASM", "toolchain", "ff-gcc"))
     print("Nuke: Tools deleted.")
 
 # Remove base ROM folder.

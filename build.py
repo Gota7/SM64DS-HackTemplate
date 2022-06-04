@@ -7,6 +7,7 @@ import Lib.ht_common as ht_common
 from Lib.xdelta import xdelta_apply_patch, xdelta_make_patch
 import nuke
 import os
+import shutil
 from sys import stderr, stdout
 import sys
 from time import sleep
@@ -61,13 +62,26 @@ def build_ship():
     zip.write(rom_name + ".xdelta", rom_name + ".xdelta")
     print("Build: Built " + rom_name + ".xdelta and " + rom_name + ".zip.\nSend the ZIP file out to whoever you want to have play!")
 
+# Setup fireflower build.
+def setup_fireflower_for_building():
+    if not os.path.exists("Base.nds"):
+        print("ERR: Base.nds is not found! Did you run \"setup.py\"?")
+        exit(0)
+    path = os.path.join("ASM", "fireflower_data")
+    if not os.path.exists(path):
+        os.mkdir(path)
+        ht_common.call_program(os.path.join("ASM", "toolchain", "Fireflower", "nds-extract.exe") + " Base.nds " + os.path.join(path, "data"))
+
 # Build ARM9.
 def build_arm9():
-    pass
+    setup_fireflower_for_building()
+    ht_common.run_fireflower()
 
 # Clean ARM9.
 def clean_arm9():
-    pass
+    path = os.path.join("ASM", "fireflower_data")
+    if os.path.exists(path):
+        shutil.rmtree(path)
 
 # Build overlays.
 def build_overlays():
