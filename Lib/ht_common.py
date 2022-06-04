@@ -6,25 +6,52 @@
 import os
 import urllib.request
 import subprocess
+import sys
 import zipfile
 
 # For calling an external program.
-def call_program(program, dir = ""):
+def call_program(program, dir = "", cmd = False):
     if os.name != 'nt':
-        program = "wine " + program         # Non windows OS use wine.
+        if cmd:
+            program = "wine cmd.exe /C " + program         # Non windows OS use wine.
+        else:
+            program = "wine " + program
     arr = program.split(' ')
     tmp_file = open(os.path.join("InstallFiles", "tmp"), "w")
+    tmp2_file = open(os.path.join("InstallFiles", "tmp2"), "w")
     if dir != "":
-        curr_dir = os.path.curdir
+        curr_dir = os.getcwd()
         os.chdir(dir)
-    subprocess.call(arr, stdout=tmp_file)
+    subprocess.call(arr, stdout=tmp_file, stderr=tmp2_file)
     if dir != "":
         os.chdir(curr_dir)
     tmp_file.close()
+    tmp2_file.close()
+
+# For calling an external program without wine.
+def call_program_nowine(program, dir = ""):
+    arr = program.split(' ')
+    tmp_file = open(os.path.join("InstallFiles", "tmp"), "w")
+    tmp2_file = open(os.path.join("InstallFiles", "tmp2"), "w")
+    if dir != "":
+        curr_dir = os.getcwd()
+        os.chdir(dir)
+    subprocess.call(arr, stdout=tmp_file, stderr=tmp2_file)
+    if dir != "":
+        os.chdir(curr_dir)
+    tmp_file.close()
+    tmp2_file.close()
 
 # Get temporary data.
 def get_tmp_data(read_mode):
     tmp_file = open(os.path.join("InstallFiles", "tmp"), read_mode)
+    data = tmp_file.read()
+    tmp_file.close()
+    return data
+
+# Get temporary 2 data.
+def get_tmp2_data(read_mode):
+    tmp_file = open(os.path.join("InstallFiles", "tmp2"), read_mode)
     data = tmp_file.read()
     tmp_file.close()
     return data
@@ -81,7 +108,17 @@ def download_zip(url, subdir, dest):
 # If all the tools are installed.
 def tools_check():
     if not os.path.exists(os.path.join("InstallFiles", "toolsInstalled")):
-        raise Exception("ERR: Tools are not installed! You should run \"toolsInstall.py\" first.")
+        print("ERR: Tools are not installed! You should run \"toolsInstall.py\" first.")
+        exit(0)
+
+# Get the name of the ROM.
+def get_rom_name():
+    if os.path.exists("romName.txt"):
+        file = open("romName.txt", "r")
+        name = file.read()
+        file.close()
+        return name
+    return "DummyNameThatNoOneWouldEverReasonablyUse"
 
 # Run fireflower.
 def run_fireflower():
@@ -91,4 +128,12 @@ def run_fireflower():
 # Run ndst.
 def run_ndst(args):
     tools_check()
-    call_program("Ndst.exe " + args, "Editor")
+    if sys.platform == "linux" or sys.platform == "linux2":
+        linux_path = os.path.join("Editor", "Ndst-Lin.elf")
+        if not os.path.exists(linux_path):
+            print("Downloading Ndst for Linux...")
+            download = urllib.request.urlretrieve("https://github.com/Gota7/Ndst/releases/download/3.2/Ndst", linux_path)
+            os.system("chmod +x " + linux_path)
+        call_program_nowine("./Ndst-Lin.elf " + args, "Editor")
+    else:
+        call_program("Ndst.exe " + args, "Editor")

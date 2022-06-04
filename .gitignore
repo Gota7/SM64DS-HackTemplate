@@ -2,6 +2,7 @@
 build
 __pycache__
 InstallFiles/tmp
+InstallFiles/tmp2
 InstallFiles/toolsInstalled
 Conversions
 Editor

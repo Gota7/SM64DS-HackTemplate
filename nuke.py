@@ -1,3 +1,8 @@
+#
+# For deleting and cleaning up files.
+#   2022 Gota7.
+#
+
 from socket import SHUT_RD
 import Lib.ht_common as ht_common
 import os
@@ -40,9 +45,11 @@ def nuke_rom_build_bin(ov = -1):
 
 # Remove hack.
 def nuke_hack():
-    path = "Patch"
+    path = ht_common.get_rom_name()
     if os.path.exists(path):
         shutil.rmtree(path)
+    if os.path.exists("romName.txt"):
+        os.remove("romName.txt")
     print("Nuke: Hack deleted.")
 
 # Nuke ASM.
