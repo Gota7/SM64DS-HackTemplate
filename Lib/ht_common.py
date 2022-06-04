@@ -132,7 +132,7 @@ def get_rom_autostart():
 # Run fireflower.
 def run_fireflower():
     tools_check()
-    call_program("fireflower.exe", os.path.join("ASM", "toolchain", "Fireflower"))
+    call_program("fireflower.exe", os.path.join("ASM", "toolchain", "Fireflower"), sys.stdout, sys.stderr)
 
 # Run ndst.
 def run_ndst(args):

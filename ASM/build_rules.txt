@@ -1,0 +1,17 @@
+rom_header fireflower_data\data\header.bin
+arm9_entry KEEP
+arm9_load KEEP
+arm7_entry KEEP
+arm7_load KEEP
+fnt fireflower_data\data\fnt.bin
+file_mode ADJUST
+arm9 fireflower_data\data\arm9.bin
+arm7 fireflower_data\data\arm7.bin
+arm9ovt fireflower_data\data\arm9ovt.bin
+arm7ovt fireflower_data\data\arm7ovt.bin
+icon fireflower_data\data\banner.bin
+rsa_sig fireflower_data\data\rsasig.bin
+data fireflower_data\data\root
+ovt_repl_flag 0xFF
+ov9 fireflower_data\data\overlay9
+ov7 fireflower_data\data\overlay7

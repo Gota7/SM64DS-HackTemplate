@@ -29,10 +29,6 @@ def toolsInstall():
         shutil.copyfile(os.path.join("InstallFiles", "objectdb.xml"), os.path.join("Editor", "objectdb.xml"))
     print("SM64DSe installed... OK")
 
-    # Make tools directory.
-    if not os.path.exists("Tools"):
-        os.mkdir("Tools")
-
     # Download ARM_GCC.
     arm_gcc_path = os.path.join("ASM", "toolchain", "ff-gcc")
     if not os.path.exists(arm_gcc_path) or ht_common.user_yn_prompt("ARM_GCC is already installed, reinstall?"):

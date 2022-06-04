@@ -76,6 +76,19 @@ def setup_fireflower_for_building():
 def build_arm9():
     setup_fireflower_for_building()
     ht_common.run_fireflower()
+    if not os.path.exists(ht_common.get_rom_name()):
+        print("ERR: Hack folder does not exist! Did you forget to run \"setup.py\"?")
+        exit(0)
+    rom_info_folder = os.path.join(ht_common.get_rom_name(), "__ROM__")
+    if not os.path.exists(rom_info_folder):
+        os.mkdir(rom_info_folder)
+    arm9_folder = os.path.join(rom_info_folder, "Arm9")
+    if not os.path.exists(arm9_folder):
+        os.mkdir(arm9_folder)
+    shutil.copyfile(os.path.join("ASM", "fireflower_data", "data", "arm9.bin"), os.path.join(rom_info_folder, "arm9.bin"))
+    nuke.nuke_rom_build_bin()
+    ht_common.call_program(os.path.join("toolchain", "Fireflower", "nds-build.exe") + " build_rules.txt " + os.path.join("fireflower_data", "Sample.nds"), "ASM")
+    input("Press Enter to continue...")
 
 # Clean ARM9.
 def clean_arm9():
