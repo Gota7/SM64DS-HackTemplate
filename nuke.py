@@ -50,6 +50,8 @@ def nuke_hack():
         shutil.rmtree(path)
     if os.path.exists("romName.txt"):
         os.remove("romName.txt")
+    if os.path.exists(path + ".romsettings"):
+        os.remove(path + ".romsettings")
     print("Nuke: Hack deleted.")
 
 # Nuke ASM.
