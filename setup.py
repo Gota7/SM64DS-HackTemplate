@@ -3,12 +3,10 @@
 #   2022 Gota7.
 #
 
-from asyncio import subprocess
 import Lib.ht_common as ht_common
 import Lib.xdelta as xdelta
 import nuke
 import os
-import shutil
 
 # Remove old hack.
 def check_remove_old_hack():
@@ -80,7 +78,6 @@ def make_romsettings():
     romsettings.close
     pass
 
-import subprocess
 # Main method.
 if __name__ == "__main__":
     print("SM64DS Hack Template Setup:")

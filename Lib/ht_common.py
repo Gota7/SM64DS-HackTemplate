@@ -10,7 +10,7 @@ import sys
 import zipfile
 
 # For calling an external program.
-def call_program(program, dir = ""):
+def call_program(program, dir = "", out = None, err = None):
     if os.name != 'nt':
         program = "wine " + program     # Non-Windows OS use WINE.
     arr = program.split(' ')
@@ -19,21 +19,29 @@ def call_program(program, dir = ""):
     if dir != "":
         curr_dir = os.getcwd()
         os.chdir(dir)
-    subprocess.call(arr, stdout=tmp_file, stderr=tmp2_file)
+    if not out:
+        out = tmp_file
+    if not err:
+        err = tmp2_file
+    subprocess.call(arr, stdout=out, stderr=err)
     if dir != "":
         os.chdir(curr_dir)
     tmp_file.close()
     tmp2_file.close()
 
 # For calling an external program without wine.
-def call_program_nowine(program, dir = ""):
+def call_program_nowine(program, dir = "", out = None, err = None):
     arr = program.split(' ')
     tmp_file = open(os.path.join("InstallFiles", "tmp"), "w")
     tmp2_file = open(os.path.join("InstallFiles", "tmp2"), "w")
     if dir != "":
         curr_dir = os.getcwd()
         os.chdir(dir)
-    subprocess.call(arr, stdout=tmp_file, stderr=tmp2_file)
+    if not out:
+        out = tmp_file
+    if not err:
+        err = tmp2_file
+    subprocess.call(arr, stdout=out, stderr=err)
     if dir != "":
         os.chdir(curr_dir)
     tmp_file.close()
@@ -116,6 +124,10 @@ def get_rom_name():
         file.close()
         return name
     return "DummyNameThatNoOneWouldEverReasonablyUse"
+
+# If to autostart ROM after build
+def get_rom_autostart():
+    return os.path.exists(os.path.join("InstallFiles", "autoBoot"))
 
 # Run fireflower.
 def run_fireflower():

@@ -3,10 +3,10 @@
 #   2022 Gota7.
 #
 
-from socket import SHUT_RD
 import Lib.ht_common as ht_common
 import os
 import shutil
+from time import sleep
 
 # Remove tools.
 def nuke_tools():
@@ -74,7 +74,8 @@ if __name__ == "__main__":
     print("  2022 Gota7")
     opt = -1
     while opt != 7:
-        opt = ht_common.user_options_prompt("\nNuke Options:", ["Delete build folder.", "Remove tools.", "Remove base ROM folder.", "Reset ASM folder.", "Delete hack.", "Nuke everything.", "Quit." ])
+        sleep(1)
+        opt = ht_common.user_options_prompt("\nNuke Options:", ["Delete build folder.", "Remove tools.", "Remove base ROM folder.", "Reset ASM folder.", "Delete hack.", "Nuke everything.", "Exit." ])
         if opt == 1:
             nuke_build_folder()
         elif opt == 2:
