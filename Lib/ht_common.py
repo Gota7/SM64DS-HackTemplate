@@ -10,12 +10,9 @@ import sys
 import zipfile
 
 # For calling an external program.
-def call_program(program, dir = "", cmd = False):
+def call_program(program, dir = ""):
     if os.name != 'nt':
-        if cmd:
-            program = "wine cmd.exe /C " + program         # Non windows OS use wine.
-        else:
-            program = "wine " + program
+        program = "wine " + program     # Non-Windows OS use WINE.
     arr = program.split(' ')
     tmp_file = open(os.path.join("InstallFiles", "tmp"), "w")
     tmp2_file = open(os.path.join("InstallFiles", "tmp2"), "w")

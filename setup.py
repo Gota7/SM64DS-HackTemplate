@@ -50,7 +50,7 @@ def extract_base():
 def set_rom_name():
     print("Enter the name for your hack (no spaces or .nds): ", end="")
     name = input()
-    if "." in name or " " in name or not ht_common.user_yn_prompt("Is this name ok (" + name + ")?"):
+    if name == "" or "." in name or " " in name or "/" in name or "\\" in name or not ht_common.user_yn_prompt("Is this name ok (" + name + ")?"):
         set_rom_name()
     file = open("romName.txt", "w")
     file.write(name)
@@ -67,7 +67,7 @@ def make_patch(rom_path):
 
 # Setup the ROM settings file.
 def make_romsettings():
-    ht_common.call_program("cd", "", True)
+    ht_common.call_program("cmd.exe /C cd", "")
     base_path = ht_common.get_tmp_data("r").strip()
     rom_name = ht_common.get_rom_name()
     lines = []
