@@ -1,8 +1,12 @@
 # Files and paths to ignore.
+build
 __pycache__
 InstallFiles/tmp
 InstallFiles/toolsInstalled
+Conversions
 Editor
 Base
 Tools
 *.nds
+build.ninja
+.ninja_log

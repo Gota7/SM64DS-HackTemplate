@@ -8,6 +8,7 @@ from io import SEEK_SET
 import os
 import shutil
 
+# Wizard for installing tools.
 def toolsInstall():
 
     # Check for .NET 6.0 installation.

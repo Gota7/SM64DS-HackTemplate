@@ -1,1 +1,1 @@
-../../ASM/ARM9/fireflowerConfig.json
+../../ASM/Patches/fireflowerConfig.json
