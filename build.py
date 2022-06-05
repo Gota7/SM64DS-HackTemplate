@@ -124,6 +124,14 @@ def clean_arm9():
     path = os.path.join("ASM", "fireflower_data")
     if os.path.exists(path):
         shutil.rmtree(path)
+    for ov in range(0, 103):
+        ov_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "Arm9", str(ov) + ".bin")
+        if os.path.exists(ov_path):
+            os.remove(ov_path)
+    ov_file_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "arm9Overlays.json")
+    if os.path.exists(ov_file_path):
+        os.remove(ov_file_path)
+        print("WARNING: Overlays configuration file has been removed, you need to rebuild overlays if custom overlays are used!")
 
 # Build overlays.
 def build_overlays():
