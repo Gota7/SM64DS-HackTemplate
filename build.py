@@ -5,6 +5,7 @@
 
 import Lib.ht_common as ht_common
 from Lib.xdelta import xdelta_apply_patch, xdelta_make_patch
+import json
 import nuke
 import os
 import shutil
@@ -74,8 +75,10 @@ def setup_fireflower_for_building():
 
 # Build ARM9.
 def build_arm9():
+
+    # Safety checks and run fireflower..
     setup_fireflower_for_building()
-    ht_common.run_fireflower()
+    ovs = ht_common.run_fireflower()
     if not os.path.exists(ht_common.get_rom_name()):
         print("ERR: Hack folder does not exist! Did you forget to run \"setup.py\"?")
         exit(0)
@@ -85,8 +88,34 @@ def build_arm9():
     arm9_folder = os.path.join(rom_info_folder, "Arm9")
     if not os.path.exists(arm9_folder):
         os.mkdir(arm9_folder)
+
+    # Copy arm9 and modified overlays.
     shutil.copyfile(os.path.join("ASM", "fireflower_data", "data", "arm9.bin"), os.path.join(rom_info_folder, "arm9.bin"))
     nuke.nuke_rom_build_bin()
+    for ov in ovs:
+        shutil.copyfile(os.path.join("ASM", "fireflower_data", "data", "overlay9", "overlay9_" + str(ov) + ".bin"), os.path.join(rom_info_folder, "Arm9", str(ov) + ".bin"))
+        nuke.nuke_rom_build_bin(ov)
+
+        # Patch overlay flags.
+        ov_file_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "arm9Overlays.json")
+        if not os.path.exists(ov_file_path):
+            shutil.copyfile(os.path.join("Base", "__ROM__", "arm9Overlays.json"), ov_file_path)
+        overlays_file = open(ov_file_path, "r")
+        overlays = json.loads(overlays_file.read())
+        overlays_file.close()
+
+        # Find the target overlay and modify flags to 0 to prevent decompression.
+        for overlay in overlays:
+            if overlay["Id"] == ov:
+                overlay["Flags"] = "0x0"
+                break
+
+        # Set arm9Overlays.json.
+        overlays_file = open(ov_file_path, "w")
+        overlays_file.write(json.dumps(overlays, indent=2))
+        overlays_file.close()
+
+    # Build a sample ROM for testing without assets if needed.
     ht_common.call_program(os.path.join("toolchain", "Fireflower", "nds-build.exe") + " build_rules.txt " + os.path.join("fireflower_data", "Sample.nds"), "ASM")
     input("Press Enter to continue...")
 

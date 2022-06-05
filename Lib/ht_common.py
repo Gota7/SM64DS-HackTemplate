@@ -132,7 +132,23 @@ def get_rom_autostart():
 # Run fireflower.
 def run_fireflower():
     tools_check()
-    call_program("fireflower.exe", os.path.join("ASM", "toolchain", "Fireflower"), sys.stdout, sys.stderr)
+    curr_dir = os.getcwd()
+    os.chdir(os.path.join("ASM", "toolchain", "Fireflower"))
+    program = "fireflower.exe"
+    if os.name != 'nt':
+        program = "wine " + program     # Non-Windows OS use WINE.
+    p = subprocess.Popen(program, shell=True, stdout=subprocess.PIPE)
+    ovs = []
+    while True:
+        inline = p.stdout.readline().decode('utf-8')
+        if not inline:
+            break
+        if "Saving overlay ov9_" in inline:
+            ovs.append(int(inline.split("ov9_")[1].split(" ")[0]))
+        sys.stdout.write(inline)
+        sys.stdout.flush()
+    os.chdir(curr_dir)
+    return ovs
 
 # Run ndst.
 def run_ndst(args):
