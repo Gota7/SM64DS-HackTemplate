@@ -61,6 +61,11 @@ def get_tmp2_data(read_mode):
     tmp_file.close()
     return data
 
+# Get the absolute directory of a path.
+def get_abs_dir(path):
+    call_program("cmd.exe /C cd", path)
+    return get_tmp_data("r").strip()
+
 # Get user yes or no prompt.
 def user_yn_prompt(prompt):
     print(prompt + " (y/n): ", end="")
