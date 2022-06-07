@@ -4,8 +4,13 @@
 #
 
 import Lib.ht_common as ht_common
+import fileManager
 import json
+import nuke
 import os
+import shutil
+import struct
+import sys
 
 # Change a file extension.
 def change_ext_to(path, ext):
@@ -83,3 +88,129 @@ def gen_ninja_file(src_folder, cpp_files, c_files, s_files, build_folder, code_a
     ninja_file = open(os.path.join("ASM", "Overlays", "build.ninja"), "w")
     ninja_file.writelines(buildfile)
     ninja_file.close()
+
+# Compile an overlay.
+def compile_overlay(ov_name):
+
+    # First, get the settings.
+    ov_folder = os.path.join("ASM", "Overlays")
+    ov_settings_path = os.path.join(ov_folder, ov_name + ".json")
+    if not os.path.exists(ov_settings_path):
+        print("ERR: Overlay settings file does not exist!")
+        exit(0)
+    ov_settings_file = open(ov_settings_path, "r")
+    ov_settings = json.loads(ov_settings_file.read())
+    ov_settings_file.close()
+
+    # Parse settings.
+    type = ov_settings["type"]
+    id_name = ov_settings["id_name"]
+    code_addr = 0x02400000
+    is_overlay = type == "overlay"
+    if not is_overlay:
+        code_addr = int(ov_settings["code_addr"][2:], 16)
+
+    # Get files.
+    cpp_files = []
+    c_files = []
+    s_files = []
+    for file in ov_settings["files"]:
+        if file.endswith(".cpp"):
+            cpp_files.append(file)
+        elif file.endswith(".c"):
+            c_files.append(file)
+        else:
+            s_files.append(file)
+
+    # Build folder.
+    build_folder = os.path.join(ov_folder, "build")
+    if not os.path.exists(build_folder):
+        os.mkdir(build_folder)
+
+    # Build the ninja file.
+    gen_ninja_file(ht_common.get_abs_dir(ov_folder).replace("\\", "/").replace(":", "$:"), cpp_files, c_files, s_files, ht_common.get_abs_dir(build_folder).replace("\\", "/").replace(":", "$:"), code_addr)
+
+    # Run ninja.
+    ht_common.call_program(os.path.join("Editor", "ninja.exe") + " -f " + os.path.join(ov_folder, "build.ninja"), "", sys.stdout, sys.stderr)
+
+    # Hack folder check.
+    if not os.path.exists(ht_common.get_rom_name()):
+        print("ERR: Hack folder does not exist! Did you forget to run \"setup.py\"?")
+        exit(0)
+
+    # Overlay tools.
+    if is_overlay:
+
+        # Check for valid ID.
+        if not id_name.isnumeric():
+            print("ERR: Overlay ID is invalid!")
+            exit(0)
+
+        # Find location of init symbol.
+        init_loc = -1
+        symbols = open(os.path.join(build_folder, "newcode.sym"), "r")
+        lines = symbols.readlines()
+        symbols.close()
+        for line in lines:
+            if "_Z4initv" == line.split(' ')[-1].strip(): # Space to ensure authenticity.
+                init_loc = int(line[0:8], 16)
+                break
+        if (init_loc == -1):
+            print("ERR: Can not find init function!")
+            exit(0)
+
+        # Get newcode and save overlay.
+        newcode_file = open(os.path.join(build_folder, "newcode.bin"), "rb")
+        newcode = newcode_file.read()
+        newcode_file.close()
+        ov_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "Arm9")
+        if not os.path.exists(ov_path):
+            os.makedirs(ov_path)
+        ov_path = os.path.join(ov_path, id_name + ".bin")
+        ov = open(ov_path, "wb")
+        ov.write(newcode)
+        static_init_start = ov.tell() + code_addr
+        ov.write(struct.pack("<I", init_loc))
+        ram_size = static_init_end = ov.tell()
+        static_init_end += code_addr
+        ov.close()
+
+        # Adjust overlay settings.
+        ov_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "arm9Overlays.json")
+        if not os.path.exists(ov_path):
+            shutil.copyfile(os.path.join("Base", "__ROM__", "arm9Overlays.json"), ov_path)
+        overlays_file = open(ov_path, "r")
+        overlays = json.loads(overlays_file.read())
+        overlays_file.close()
+
+        # Find the target overlay and modify vars.
+        ov = dict()
+        found = False
+        for overlay in overlays:
+            if overlay["Id"] == int(id_name):
+                overlay["RAMAddress"] = hex(code_addr)
+                overlay["RAMSize"] = hex(ram_size)
+                overlay["BSSSize"] = hex(0)
+                overlay["StaticInitStart"] = hex(static_init_start)
+                overlay["StaticInitEnd"] = hex(static_init_end)
+                Found = True
+                break
+
+        # Append overlay if doesn't exist. TODO: HAVE TO MAKE NEW FILEID!!!
+        #if not found:
+        #    overlays.append
+
+        # Set arm9Overlays.json.
+        overlays_file = open(ov_path, "w")
+        overlays_file.write(json.dumps(overlays, indent=2))
+        overlays_file.close()
+
+        # Make sure to clean to allow proper insertion.
+        nuke.nuke_rom_build_bin(int(id_name))
+
+    # DL.
+    else:
+        print("ERR: Currently not supported! Sorry!")
+        exit(0)
+
+    # TODO: USE FS CODE!!!

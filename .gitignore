@@ -13,3 +13,4 @@ build.ninja
 ASM/fireflower_data
 ASM/toolchain/ff-gcc
 ASM/toolchain/Fireflower
+*.rsp

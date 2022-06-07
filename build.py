@@ -5,6 +5,7 @@
 
 import Lib.ht_common as ht_common
 from Lib.xdelta import xdelta_apply_patch, xdelta_make_patch
+import fileManager as fs
 import json
 import nuke
 import os
@@ -97,12 +98,7 @@ def build_arm9():
         nuke.nuke_rom_build_bin(ov)
 
         # Patch overlay flags.
-        ov_file_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "arm9Overlays.json")
-        if not os.path.exists(ov_file_path):
-            shutil.copyfile(os.path.join("Base", "__ROM__", "arm9Overlays.json"), ov_file_path)
-        overlays_file = open(ov_file_path, "r")
-        overlays = json.loads(overlays_file.read())
-        overlays_file.close()
+        overlays = fs.fs_get_overlays()
 
         # Find the target overlay and modify flags to 0 to prevent decompression.
         for overlay in overlays:
@@ -111,9 +107,7 @@ def build_arm9():
                 break
 
         # Set arm9Overlays.json.
-        overlays_file = open(ov_file_path, "w")
-        overlays_file.write(json.dumps(overlays, indent=2))
-        overlays_file.close()
+        fs.fs_write_overlays(overlays)
 
     # Build a sample ROM for testing without assets if needed.
     ht_common.call_program(os.path.join("toolchain", "Fireflower", "nds-build.exe") + " build_rules.txt " + os.path.join("fireflower_data", "Sample.nds"), "ASM")

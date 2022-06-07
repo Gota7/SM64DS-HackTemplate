@@ -1,6 +1,6 @@
 @ Originally by Gota7, ported by Pants64DS.
 @ Spawn a feather instead of a Power Flower
-.hook(0x020DD1EC, 102)
+.hook(0x020DD1EC, 6)
 nsub_02149ab0_ov_66:
 	mov	 r4, #0
 	b    0x02149ac4
