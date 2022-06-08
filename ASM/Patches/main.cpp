@@ -7,7 +7,7 @@ bool init = false;
 void Initialize()
 {
 
-	//Load the MOM overlay.
+	// Load the test overlay.
 	LoadOverlay(false, 155);
 
 }

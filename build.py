@@ -131,6 +131,11 @@ def clean_arm9():
 # Build overlays.
 def build_overlays():
 
+    # Have to delete build folder for some reason.
+    ov_build_path = os.path.join("ASM", "Overlays", "build")
+    if os.path.exists(ov_build_path):
+        shutil.rmtree(ov_build_path)
+
     # Get list of JSON overlays to compile.
     for file_tuple in os.walk(os.path.join("ASM", "Overlays")):
         for file in file_tuple[2]:
