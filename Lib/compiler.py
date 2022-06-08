@@ -4,7 +4,7 @@
 #
 
 import Lib.ht_common as ht_common
-import fileManager
+import fileManager as fs
 import json
 import nuke
 import os
@@ -92,6 +92,32 @@ def gen_ninja_file(src_folder, cpp_files, c_files, s_files, build_folder, code_a
 # Compile an overlay.
 def compile_overlay(ov_name):
 
+    # Get symbols from 9x first.
+    symbols_file_path = os.path.join("ASM", "symbols9.x")
+    symbols_file = open(symbols_file_path, "r")
+    symbols = symbols_file.readlines()
+    symbols_file.close()
+
+    # Get symbols from patches ELF if it exists.
+    obj_copy = os.path.join("ASM", "toolchain", "ff-gcc", "bin", "arm-none-eabi-objdump.exe")
+    elf_path = os.path.join("ASM", "fireflower_data", "build", "arm9.elf")
+    symbols_file_path = os.path.join("ASM", "fireflower_data", "build", "arm9.sym")
+    if (os.path.exists(elf_path)):
+        symbols.append("\n\n\n/* Below is a list of symbols from the compiled patches: */\n")
+        ht_common.call_program(obj_copy + " -t " + elf_path)
+        for symbol in ht_common.get_tmp_data("r").split('\n'):
+            data = symbol.split()
+            if (len(data) == 5 or len(data) == 6) and data[1] == 'l':
+                if not "*ABS*" in data[2] and not "*ABS*" in data[3]:
+                    symbol_name = data[len(data) - 1]
+                    if not symbol_name.startswith("."):
+                        addr = int(data[0], 16)
+                        symbols += symbol_name + "\t\t\t = " + hex(addr) + ";\n"
+        symbols_file_path = os.path.join("ASM", "Overlays", "symbols.x")
+        symbols_file = open(symbols_file_path, "w")
+        symbols_file.writelines(symbols)
+        symbols_file.close()
+
     # First, get the settings.
     ov_folder = os.path.join("ASM", "Overlays")
     ov_settings_path = os.path.join(ov_folder, ov_name + ".json")
@@ -107,7 +133,7 @@ def compile_overlay(ov_name):
     id_name = ov_settings["id_name"]
     code_addr = 0x02400000
     is_overlay = type == "overlay"
-    if not is_overlay:
+    if is_overlay:
         code_addr = int(ov_settings["code_addr"][2:], 16)
 
     # Get files.
@@ -176,34 +202,34 @@ def compile_overlay(ov_name):
         ov.close()
 
         # Adjust overlay settings.
-        ov_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "arm9Overlays.json")
-        if not os.path.exists(ov_path):
-            shutil.copyfile(os.path.join("Base", "__ROM__", "arm9Overlays.json"), ov_path)
-        overlays_file = open(ov_path, "r")
-        overlays = json.loads(overlays_file.read())
-        overlays_file.close()
+        overlays = fs.fs_get_overlays()
 
-        # Find the target overlay and modify vars.
-        ov = dict()
-        found = False
+        # Find the proper overlay.
+        ov = None
         for overlay in overlays:
             if overlay["Id"] == int(id_name):
-                overlay["RAMAddress"] = hex(code_addr)
-                overlay["RAMSize"] = hex(ram_size)
-                overlay["BSSSize"] = hex(0)
-                overlay["StaticInitStart"] = hex(static_init_start)
-                overlay["StaticInitEnd"] = hex(static_init_end)
-                Found = True
+                ov = overlay
+                file_id = ov["FileId"]
                 break
 
-        # Append overlay if doesn't exist. TODO: HAVE TO MAKE NEW FILEID!!!
-        #if not found:
-        #    overlays.append
+        # Add overlay if it doesn't exist.
+        if not ov:
+            ov = dict()
+            ov["Id"] = int(id_name)
+            overlays.append(ov)
+            file_id = hex(fs.fs_get_first_free_id())
+
+        # Modify the overlay.
+        ov["RAMAddress"] = hex(code_addr)
+        ov["RAMSize"] = hex(ram_size)
+        ov["BSSSize"] = hex(0)
+        ov["StaticInitStart"] = hex(static_init_start)
+        ov["StaticInitEnd"] = hex(static_init_end)
+        ov["FileId"] = file_id
+        ov["Flags"] = hex(0)
 
         # Set arm9Overlays.json.
-        overlays_file = open(ov_path, "w")
-        overlays_file.write(json.dumps(overlays, indent=2))
-        overlays_file.close()
+        fs.fs_write_overlays(overlays)
 
         # Make sure to clean to allow proper insertion.
         nuke.nuke_rom_build_bin(int(id_name))
@@ -212,5 +238,3 @@ def compile_overlay(ov_name):
     else:
         print("ERR: Currently not supported! Sorry!")
         exit(0)
-
-    # TODO: USE FS CODE!!!

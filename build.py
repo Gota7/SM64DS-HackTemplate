@@ -4,6 +4,7 @@
 #
 
 import Lib.ht_common as ht_common
+import Lib.compiler as cc
 from Lib.xdelta import xdelta_apply_patch, xdelta_make_patch
 import fileManager as fs
 import json
@@ -111,7 +112,7 @@ def build_arm9():
 
     # Build a sample ROM for testing without assets if needed.
     ht_common.call_program(os.path.join("toolchain", "Fireflower", "nds-build.exe") + " build_rules.txt " + os.path.join("fireflower_data", "Sample.nds"), "ASM")
-    input("Press Enter to continue...")
+    input("ARM9 patches finished. Press Enter to continue...")
 
 # Clean ARM9.
 def clean_arm9():
@@ -129,11 +130,33 @@ def clean_arm9():
 
 # Build overlays.
 def build_overlays():
-    pass
+
+    # Get list of JSON overlays to compile.
+    for file_tuple in os.walk(os.path.join("ASM", "Overlays")):
+        for file in file_tuple[2]:
+            if file.endswith(".json"):
+                cc.compile_overlay(file[0:file.rfind(".")])
+    input("Overlay insertion finished. Press Enter to continue...")
 
 # Clean overlays.
 def clean_overlays():
-    pass
+    build_folder = os.path.join("ASM", "Overlays", "build")
+    if os.path.exists(build_folder):
+        shutil.rmtree(build_folder)
+    ov_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "Arm9")
+    if os.path.exists(ov_path):
+        for ovs in os.walk(ov_path):
+            for ov in ovs[2]:
+                id = ov.split(".")[0]
+                if id.isnumeric():
+                    num = int(id)
+                    if num > 154:
+                        os.remove(os.path.join(ovs[0], ov))
+    ov_file_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "arm9Overlays.json")
+    if os.path.exists(ov_file_path):
+        os.remove(ov_file_path)
+        print("WARNING: Overlays configuration file has been removed, you need to rebuild arm9 patches if arm9 patches are used!")
+    print("WARNING: If DLs were used, there is no way for this tool to ensure their removal from the filesystem!")
 
 # Build ASM.
 def build_asm():
