@@ -13,4 +13,11 @@ build.ninja
 ASM/fireflower_data
 ASM/toolchain/ff-gcc
 ASM/toolchain/Fireflower
+ASM/Overlays/symbols.x
 *.rsp
+
+# Dev testing. DELETE THESE!
+Shining
+Shining.romsettings
+Shining.xdelta
+Shining.zip

@@ -103,16 +103,16 @@ def compile_overlay(ov_name):
     elf_path = os.path.join("ASM", "fireflower_data", "build", "arm9.elf")
     symbols_file_path = os.path.join("ASM", "fireflower_data", "build", "arm9.sym")
     if (os.path.exists(elf_path)):
-        symbols.append("\n\n\n/* Below is a list of symbols from the compiled patches: */\n")
+        symbols = []
         ht_common.call_program(obj_copy + " -t " + elf_path)
         for symbol in ht_common.get_tmp_data("r").split('\n'):
             data = symbol.split()
-            if (len(data) == 5 or len(data) == 6) and data[1] == 'l':
-                if not "*ABS*" in data[2] and not "*ABS*" in data[3]:
-                    symbol_name = data[len(data) - 1]
-                    if not symbol_name.startswith("."):
-                        addr = int(data[0], 16)
-                        symbols += symbol_name + "\t\t\t = " + hex(addr) + ";\n"
+            if (len(data) == 5 or len(data) == 6):
+                #if not "*ABS*" in data[2] and not "*ABS*" in data[3]:
+                symbol_name = data[len(data) - 1]
+                if not symbol_name.startswith(".") and not "*ABS*" in symbol_name:
+                    addr = int(data[0], 16)
+                    symbols += symbol_name + "\t\t\t = " + hex(addr) + ";\n"
         symbols_file_path = os.path.join("ASM", "Overlays", "symbols.x")
         symbols_file = open(symbols_file_path, "w")
         symbols_file.writelines(symbols)
