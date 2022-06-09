@@ -1040,6 +1040,8 @@ ReadUnalignedShort                                                              
 
 UNUSED_RAM                                                                        = 0x023C4000;
 
+LEVEL_SELECT                                                                      = 0x02092664;
+
 FALL_DAMAGE_BIG = 0x020e2e88;
 FALL_DAMAGE_SMALL = 0x020e2e9c;
 

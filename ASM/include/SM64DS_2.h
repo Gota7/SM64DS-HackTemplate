@@ -1236,6 +1236,7 @@ extern "C"
 	extern Fix12i FALL_DAMAGE_SMALL;
 
 	extern uint8_t GAME_PAUSED; // 0 = not paused, 1 = paused, 2 = unpausing
+	extern uint32_t LEVEL_SELECT;
 
 	struct
 	{

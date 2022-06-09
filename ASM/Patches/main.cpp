@@ -8,7 +8,7 @@ void Initialize()
 {
 
 	// Load the test overlay.
-	LoadOverlay(false, 155);
+	LoadOverlay(false, 156);
 
 }
 
@@ -21,6 +21,12 @@ void hook_0200da0c()
 	if (!init) {
 		Initialize();
 		init = true;
+	}
+
+	// Test for level select shortcut.
+	if (INPUT_ARR[0].buttonsHeld & Input::Buttons::START && INPUT_ARR[0].buttonsHeld & Input::Buttons::SELECT)
+	{
+		LEVEL_SELECT = 2;
 	}
 
 }

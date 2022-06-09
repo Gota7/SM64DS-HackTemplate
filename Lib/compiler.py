@@ -33,6 +33,7 @@ def gen_ninja_file(src_folder, cpp_files, c_files, s_files, build_folder, code_a
     base_path = ht_common.get_abs_dir("ASM").replace("\\", "/")
     include_path = ht_common.get_abs_dir(os.path.join("ASM", "include")).replace("\\", "/")
     symbols_x = ht_common.get_abs_dir(os.path.join("ASM", "Overlays")).replace("\\", "/") + "/symbols.x"
+    linker_x = ht_common.get_abs_dir(os.path.join("ASM", "Overlays")).replace("\\", "/") + "/linker.x"
     newcode_map = build_folder + "/newcode.map"
     lib_path = base_path + "/toolchain/ff-gcc/lib/gcc/arm-none-eabi/10.3.1"
     buildfile.append("rule cxx\n")
@@ -45,7 +46,7 @@ def gen_ninja_file(src_folder, cpp_files, c_files, s_files, build_folder, code_a
     buildfile.append("  command = " + base_path + "/toolchain/ff-gcc/bin/arm-none-eabi-gcc.exe -I" + include_path + " " + config["build"]["flags"]["asm"] + " " + config["build"]["flags"]["arm9"] + " -c $in -o $out\n")
     buildfile.append("\n")
     buildfile.append("rule ld\n")
-    buildfile.append("  command = " + base_path + "/toolchain/ff-gcc/bin/arm-none-eabi-ld.exe -T " + symbols_x + " -g -Map " + newcode_map + " -Ttext " + hex(code_addr) + " -L" + lib_path + " @tmp.rsp -o $out\n")
+    buildfile.append("  command = " + base_path + "/toolchain/ff-gcc/bin/arm-none-eabi-ld.exe " + " -T " + linker_x + " -T " + symbols_x + " -g -Map " + newcode_map + " -Ttext " + hex(code_addr) + " -L" + lib_path + " @tmp.rsp -o $out\n")
     buildfile.append("  rspfile = tmp.rsp\n")
     buildfile.append("  rspfile_content = $in\n")
     buildfile.append("rule symbol_dump\n")
@@ -195,6 +196,8 @@ def compile_overlay(ov_name):
         ov_path = os.path.join(ov_path, id_name + ".bin")
         ov = open(ov_path, "wb")
         ov.write(newcode)
+        while ov.tell() % 4:
+            ov.write(bytearray(1))
         static_init_start = ov.tell() + code_addr
         ov.write(struct.pack("<I", init_loc))
         ram_size = static_init_end = ov.tell()
