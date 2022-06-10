@@ -8,7 +8,7 @@ void Initialize()
 {
 
 	// Load the test overlay.
-	LoadOverlay(false, 156);
+	LoadOverlay(false, 155);
 
 }
 

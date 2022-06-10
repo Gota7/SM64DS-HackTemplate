@@ -1238,6 +1238,18 @@ extern "C"
 	extern uint8_t GAME_PAUSED; // 0 = not paused, 1 = paused, 2 = unpausing
 	extern uint32_t LEVEL_SELECT;
 
+	// Some random file stuff below.
+	extern int DAT_0209d574;
+	uint32_t FUN_0201a9ec(int*);
+	void FUN_02018a58(int);
+	extern void* thread;
+	uint32_t OS_GetThreadPriority(void*);
+	void OS_SetThreadPriority(void*, uint32_t);
+	uint16_t FUN_020189f0(const char*);
+	void FUN_02018a40(int, uint16_t);
+	void FUN_0201a9fc(int*);
+	void FUN_0201a96c(int*, uint32_t);
+
 	struct
 	{
 		// the return value is usually 1
@@ -1251,6 +1263,7 @@ extern "C"
 	short GetAngleToCamera(unsigned playerID = 0);
 
 	bool LoadOverlay(bool isArm7, unsigned ovID);
+	bool UnloadOverlay(bool isArm7, unsigned ovID);
 	
 	bool LoadArchive(int archiveID);
 	
