@@ -1053,11 +1053,11 @@ _ZN9ActorBase7ProcessEMS_FivEMS_FbvEMS_FvjE = 0x02043c88;
 /* Fileloading stuff */
 DAT_0209d574                                                                      = 0x0209d574;
 FUN_0201a9ec                                                                      = 0x0201a9ec;
-FUN_02018a58                                                                      = 0x02018a58;
+InitOv0IDToFileIDTable                                                            = 0x02018a58;
 thread                                                                            = 0x020a613c;
 OS_GetThreadPriority                                                              = 0x02057e7c;
 OS_SetThreadPriority                                                              = 0x02057e84;
-FUN_020189f0                                                                      = 0x020189f0;
-FUN_02018a40                                                                      = 0x02018a40;
+PathToFileID                                                                      = 0x020189f0;
+AddFileIDToOv0Table                                                               = 0x02018a40;
 FUN_0201a9fc                                                                      = 0x0201a9fc;
 FUN_0201a96c                                                                      = 0x0201a96c;

@@ -183,8 +183,8 @@ def compile_overlay(ov_name):
                 init_loc = int(line[0:8], 16)
                 break
         if (init_loc == -1):
-            print("ERR: Can not find init function!")
-            exit(0)
+            print("WARN: Can not find init function for " + ov_name + "!")
+            init_loc = 0
 
         # Get newcode and save overlay.
         newcode_file = open(os.path.join(build_folder, "newcode.bin"), "rb")

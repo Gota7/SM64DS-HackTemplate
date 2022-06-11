@@ -1241,12 +1241,12 @@ extern "C"
 	// Some random file stuff below.
 	extern int DAT_0209d574;
 	uint32_t FUN_0201a9ec(int*);
-	void FUN_02018a58(int);
+	bool InitOv0IDToFileIDTable(int numFiles);
 	extern void* thread;
 	uint32_t OS_GetThreadPriority(void*);
 	void OS_SetThreadPriority(void*, uint32_t);
-	uint16_t FUN_020189f0(const char*);
-	void FUN_02018a40(int, uint16_t);
+	uint16_t PathToFileID(const char* path);
+	void AddFileIDToOv0Table(int ov0ID, uint16_t fileID);
 	void FUN_0201a9fc(int*);
 	void FUN_0201a96c(int*, uint32_t);
 
