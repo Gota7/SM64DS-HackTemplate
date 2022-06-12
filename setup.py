@@ -50,6 +50,7 @@ def set_rom_name():
     name = input()
     if name == "" or "." in name or " " in name or "/" in name or "\\" in name or not ht_common.user_yn_prompt("Is this name ok (" + name + ")?"):
         set_rom_name()
+        return
     file = open("romName.txt", "w")
     file.write(name)
     file.close()
