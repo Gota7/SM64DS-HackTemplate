@@ -66,6 +66,11 @@ def get_abs_dir(path):
     call_program("cmd.exe /C cd", path)
     return get_tmp_data("r").strip()
 
+# Get a user prompt.
+def user_prompt(prompt):
+    print(prompt + ": ", end = "")
+    return input()
+
 # Get user yes or no prompt.
 def user_yn_prompt(prompt):
     print(prompt + " (y/n): ", end="")

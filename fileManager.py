@@ -93,7 +93,11 @@ def fs_get_filelist():
 
 # Write a list of files.
 def fs_write_filelist(files):
-    pass
+    file_list = fs_write_file("__ROM__/files.txt", False)
+    for file in files:
+        if not file[0].startswith("@7_") and not file[0].startswith("@9_"):
+            file_list.write("../" + file[0] + " " + file[1] + "\n")
+    file_list.close()
 
 # Get a list of OV0 and file path values.
 def fs_get_ov0_filename_tuples():
@@ -149,7 +153,7 @@ def fs_get_file_name_from_ov0_id(id):
     for item in fs_get_ov0_filename_tuples():
         if item[0] == id:
             return item[1]
-    return "data/sound_data.sdat"
+    return None
 
 # Get a free file ID.
 def fs_get_first_free_id():
@@ -176,17 +180,16 @@ def fs_get_first_free_ov0_id():
 def fs_add_file(name, preferred_ov0_id = -1):
     get_test = fs_get_file(name)
     get_test.close()
-    if preferred_ov0_id == -1:
+    if preferred_ov0_id != -1:
         ov0_id = preferred_ov0_id
-        for ov in fs_get_ov0_filename_tuples():
-            if ov[0] == ov0_id:
-                print("WARN: File with matching overlay 0 ID exists, skipping.")
-                exit()
+        if fs_get_file_name_from_ov0_id(preferred_ov0_id):
+            print("WARN: File with matching overlay 0 ID exists, skipping.")
+            exit(0)
     else:
         ov0_id = fs_get_first_free_ov0_id()
     file_id = fs_get_first_free_id()
     files = fs_get_filelist()
-    files.append((name, file_id))
+    files.append((name, hex(file_id)))
     fs_write_filelist(files)
     ov0s = fs_get_ov0_filename_tuples()
     ov0s.append((ov0_id, name))
@@ -195,7 +198,7 @@ def fs_add_file(name, preferred_ov0_id = -1):
 # If a name exists.
 def fs_name_exists(name):
     for file in fs_get_filelist():
-        if file == name:
+        if file[0] == name:
             return True
     return False
 
@@ -207,14 +210,15 @@ def fs_rename_file(name, new_name):
     files = fs_get_filelist()
     for i in range(0, len(files)):
         if files[i][0] == name:
-            files[i][0] = new_name
+            files[i] = (new_name, files[i][1])
             break
     fs_write_filelist(files)
     ov0s = fs_get_ov0_filename_tuples()
     for i in range(0, len(ov0s)):
         if ov0s[i][1] == name:
-            ov0s[i][1] = new_name
+            ov0s[i] = (ov0s[i][0], new_name)
             break
+    fs_set_ov0_filename_tuples(ov0s)
     file = fs_get_file(name)
     file2 = fs_write_file(new_name)
     file2.write(file.read())
@@ -233,14 +237,109 @@ def fs_rename_file(name, new_name):
 # Delete a file from the filesystem.
 def fs_del_file(name):
     if ht_common.user_warn():
-        pass
+        if fs_name_exists(name):
+            files = fs_get_filelist()
+            for i in range(0, len(files)):
+                if files[i][0] == name:
+                    files.remove(files[i])
+                    break
+            fs_write_filelist(files)
+            ov0s = fs_get_ov0_filename_tuples()
+            for i in range(0, len(ov0s)):
+                if ov0s[i][1] == name:
+                    ov0s.remove(ov0s[i])
+                    break
+            fs_set_ov0_filename_tuples(ov0s)
+        path = ""
+        for dir in name.split("/"):
+            if path == "":
+                path = dir
+            else:
+                path = os.path.join(path, dir)
+        path = os.path.join(ht_common.get_rom_name(), path)
+        if os.path.exists(path):
+            os.remove(path)
 
 # Test.
 if __name__ == "__main__":
     print("SM64DS Hack Template File Manager:")
     print("  2022 Gota7")
     opt = 0
-    options = [ "Add file", "Add file by ov0 id", "Rename file", "Rename file by ov0 id", "Delete file", "Delete file by ov0 id", "Exit" ]
+    options = [ "Add file.", "Add file by ov0 id.", "Rename file.", "Rename file by ov0 id.", "Delete file.", "Delete file by ov0 id.", "Convert file name to ov0 id.", "Convert ov0 id to file name.", "Exit." ]
     while opt != len(options):
         sleep(1)
         opt = ht_common.user_options_prompt("Filesystem Options:", options)
+        if opt == 1:
+            file_name = ht_common.user_prompt("File name to add (blank to cancel)")
+            if file_name != "":
+                fs_add_file(file_name)
+        elif opt == 2:
+            id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
+            if id != "":
+                if id.startswith("0x"):
+                    id = int(id[2:], 16)
+                else:
+                    id = int(id)
+                file_name = ht_common.user_prompt("File name (blank to cancel)")
+                if file_name != "":
+                    fs_rename_file(file_name, id)
+        elif opt == 3:
+            file_name = ht_common.user_prompt("File name (blank to cancel)")
+            if file_name != "":
+                new_file_name = ht_common.user_prompt("New file name (blank to cancel)")
+                if new_file_name != "":
+                    fs_rename_file(file_name, new_file_name)
+        elif opt == 4:
+            id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
+            if id != "":
+                if id.startswith("0x"):
+                    id = int(id[2:], 16)
+                else:
+                    id = int(id)
+                new_file_name = ht_common.user_prompt("New file name (blank to cancel)")
+                if new_file_name != "":
+                    file_name = fs_get_file_name_from_ov0_id(id)
+                    if not file_name:
+                        print("ERR: Can not find file with given ov0 id!")
+                        exit(0)
+                    else:
+                        fs_rename_file(file_name, new_file_name)
+        elif opt == 5:
+            file_name = ht_common.user_prompt("File name to delete (blank to cancel)")
+            if file_name != "":
+                fs_del_file(file_name)
+        elif opt == 6:
+            id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
+            if id != "":
+                if id.startswith("0x"):
+                    id = int(id[2:], 16)
+                else:
+                    id = int(id)
+                file_name = fs_get_file_name_from_ov0_id(id)
+                if not file_name:
+                    print("ERR: Can not find file with given ov0 id!")
+                    exit(0)
+                else:
+                    fs_del_file(file_name)
+        elif opt == 7:
+            file_name = ht_common.user_prompt("File name (blank to cancel)")
+            if file_name != "":
+                id = fs_get_ov0_id(file_name)
+                if id == -1:
+                    print("ERR: Given file does not have an ov0 id!")
+                    exit(0)
+                else:
+                    print(hex(id))
+        elif opt == 8:
+            id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
+            if id != "":
+                if id.startswith("0x"):
+                    id = int(id[2:], 16)
+                else:
+                    id = int(id)
+                file_name = fs_get_file_name_from_ov0_id(id)
+                if not file_name:
+                    print("ERR: Can not find file with given ov0 id!")
+                    exit(0)
+                else:
+                    print(file_name)
