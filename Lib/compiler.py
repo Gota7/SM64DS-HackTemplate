@@ -5,6 +5,7 @@
 
 import Lib.ht_common as ht_common
 import fileManager as fs
+from io import SEEK_END, SEEK_SET
 import json
 import nuke
 import os
@@ -182,7 +183,7 @@ def compile_overlay(ov_name):
             if "_Z4initv" == line.split(' ')[-1].strip(): # Space to ensure authenticity.
                 init_loc = int(line[0:8], 16)
                 break
-        if (init_loc == -1):
+        if init_loc == -1:
             print("WARN: Can not find init function for " + ov_name + "!")
             init_loc = 0
 
@@ -239,5 +240,84 @@ def compile_overlay(ov_name):
 
     # DL.
     else:
-        print("ERR: Currently not supported! Sorry!")
-        exit(0)
+
+        # Get bin1 file.
+        newcode_file = open(os.path.join(build_folder, "newcode.bin"), "rb")
+        bin1 = newcode_file.read()
+        newcode_file.close()
+
+        # Find location of init and cleanup symbol.
+        init_loc = -1
+        cleanup_loc = -1
+        symbols = open(os.path.join(build_folder, "newcode.sym"), "r")
+        lines = symbols.readlines()
+        symbols.close()
+        for line in lines:
+            if "_Z4initv" == line.split(' ')[-1].strip(): # Space to ensure authenticity.
+                init_loc = int(line[0:8], 16)
+            if "_Z7cleanupv" == line.split(' ')[-1].strip(): # Space to ensure authenticity.
+                cleanup_loc = int(line[0:8], 16)
+        if init_loc == -1 or cleanup_loc == -1:
+            if init_loc == -1:
+                print("ERR: Can not find init function for " + ov_name + "!")
+            if cleanup_loc == -1:
+                print("ERR: Can not find cleanup function for " + ov_name + "!")
+            exit(0)
+        init_off = init_loc - code_addr + 0x10
+        cleanup_off = cleanup_loc - code_addr + 0x10
+
+        # Build the ninja file.
+        gen_ninja_file(ht_common.get_abs_dir(ov_folder).replace("\\", "/").replace(":", "$:"), cpp_files, c_files, s_files, ht_common.get_abs_dir(build_folder).replace("\\", "/").replace(":", "$:"), code_addr + 4)
+
+        # Run ninja.
+        ht_common.call_program(os.path.join("Editor", "ninja.exe") + " -f " + os.path.join(ov_folder, "build.ninja"), "", sys.stdout, sys.stderr)
+
+        # Get bin2 file.
+        newcode_file = open(os.path.join(build_folder, "newcode.bin"), "rb")
+        bin2 = newcode_file.read()
+        newcode_file.close()
+
+        # Size check.
+        if len(bin1) != len(bin2):
+            print("ERR: Generated code sizes do not match!")
+            exit(0)
+
+        # Output file.
+        out = fs.fs_write_file(id_name)
+        out.write(struct.pack("<Q", 0))
+        out.write(struct.pack("<Q", 0))
+        aligned_code_size = (len(bin1) & ~3) & 0xffffffff # Python to uint hack.
+        relocations = []
+        for i in range(0, aligned_code_size, 4):
+            word0 = struct.unpack_from("<I", bin1, i)[0]
+            word1 = struct.unpack_from("<I", bin2, i)[0]
+            if word0 == word1: # General case.
+                out.write(struct.pack("<I", word0))
+            elif word0 + 4 == word1: # Pointer.
+                out.write(struct.pack("<I", word0 - code_addr + 0x10))
+                relocations.append(i)
+            elif word0 == word1 + 1 and word0 >> 24 == word1 >> 24: # Branches.
+                dest_addr = ((word0 & 0x00ffffff) << 8 >> 6) + 8 + code_addr + i
+                out.write(struct.pack("<I", (dest_addr >> 2) | (word0 & 0xff000000)))
+                relocations.append(i)
+            else:
+                print("ERR: Code files at offset " + hex(i) + " don't match!")
+                exit(0)
+        for i in range(aligned_code_size, len(bin1)):
+            out.write(struct.pack("B", struct.unpack_from("B", bin1, i)[0]))
+
+        # Align stream.
+        while out.tell() % 4 != 0:
+            out.write(struct.pack("B", 0))
+
+        # Relocations.
+        reloc_offset = out.tell()
+        out.seek(0, SEEK_SET)
+        out.write(struct.pack("<H", len(relocations)))
+        out.write(struct.pack("<H", reloc_offset))
+        out.write(struct.pack("<H", init_off))
+        out.write(struct.pack("<H", cleanup_off))
+        out.seek(0, SEEK_END)
+        for reloc in relocations:
+            out.write(struct.pack("<H", reloc + 0x10))
+        out.close()

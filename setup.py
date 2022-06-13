@@ -76,7 +76,7 @@ def make_romsettings():
     lines.append(base_path + "\\" + rom_name + ".nds" + "\n")
     romsettings = open(ht_common.get_rom_name() + ".romsettings", "w")
     romsettings.writelines(lines)
-    romsettings.close
+    romsettings.close()
     pass
 
 # Main method.

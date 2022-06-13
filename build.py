@@ -5,9 +5,8 @@
 
 import Lib.ht_common as ht_common
 import Lib.compiler as cc
-from Lib.xdelta import xdelta_apply_patch, xdelta_make_patch
+from Lib.xdelta import xdelta_make_patch
 import fileManager as fs
-import json
 import nuke
 import os
 import shutil
@@ -22,9 +21,9 @@ def build_rom():
     if not os.path.exists("Base") or not os.path.exists("Conversions") or not os.path.exists(rom_name):
         print("ERR: Base ROM and hack folders are not present! Did you run \"setup.py\" first?")
         exit(0)
-    ht_common.run_ndst("-n " + ht_common.get_abs_dir("Base") + " " + ht_common.get_abs_dir(rom_name) + " " + ht_common.get_abs_dir("Conversions") + " " + os.path.join("..", ht_common.get_rom_name()) + ".nds")
     # Linux hack - use Ndst-Lin.
     if sys.platform == "linux" or sys.platform == "linux2":
+        ht_common.run_ndst("-n " + os.path.join("..", "Base") + " " + os.path.join("..", ht_common.get_rom_name()) + " " + os.path.join("..", "Conversions") + " " + os.path.join("..", ht_common.get_rom_name()) + ".nds")
         curr_dir = os.getcwd()
         os.chdir("Editor")
         ninja_file = open("build.ninja", "r")
@@ -37,6 +36,7 @@ def build_rom():
         os.chdir(curr_dir)
         ht_common.call_program_nowine("ninja", "Editor", stdout, stderr)
     else:
+        ht_common.run_ndst("-n " + ht_common.get_abs_dir("Base") + " " + ht_common.get_abs_dir(rom_name) + " " + ht_common.get_abs_dir("Conversions") + " " + os.path.join("..", ht_common.get_rom_name()) + ".nds")
         ht_common.call_program("ninja.exe", "Editor", stdout, stderr)
     print("Build: ROM built.")
     if ht_common.get_rom_autostart():

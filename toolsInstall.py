@@ -4,7 +4,6 @@
 #
 
 import Lib.ht_common as ht_common
-from io import SEEK_SET
 import os
 import shutil
 

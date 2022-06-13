@@ -1,0 +1,7 @@
+{
+    "type": "dl",
+    "id_name": "Code/test.bin",
+    "files": [
+        "testDL/main.cpp"
+    ]
+}
