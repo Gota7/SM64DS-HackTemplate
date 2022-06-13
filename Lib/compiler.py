@@ -321,3 +321,7 @@ def compile_overlay(ov_name):
         for reloc in relocations:
             out.write(struct.pack("<H", reloc + 0x10))
         out.close()
+
+        # Add overlay to filesystem if not present.
+        if not fs.fs_name_exists(id_name):
+            fs.fs_add_file(id_name)
