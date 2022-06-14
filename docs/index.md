@@ -1,37 +1,31 @@
-## Welcome to GitHub Pages
+# SM64DS Hacking Template
+Welcome to the SM64DS Hacking template guide! Here you can find everything you could ever want to know about using it.
 
-You can use the [editor on GitHub](https://github.com/Gota7/SM64DS-HackTemplate/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+## Pages
+* [Installation](install.md)
+* Setup - TODO!
+* Building - TODO!
+* Version Control - TODO!
+* SM64DS Patches - TODO!
+* File Management - TODO!
+* ASM Hacks - TODO!
+* Overlays & DLs - TODO!
+* Nuking - TODO!
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Why Use This?
+So you may be wondering why you should use this template over just editing the ROM directly with SM64DSe. There may be a little extra work in setting up and learning the template, but it saves a lot of time in the long run. Improvements include:
 
-### Markdown
+* No more ROM corruption - The template will rebuild the ROM from its files, meaning that corruption is not possible.
+* Files are extracted and uncompressed (even in archives) - Want to copy over some files or replace them? No problem, just use your OS's regular file manager!
+* Elaborate patch folder design - Since the template separates files you edit from files from the base game, this allows you to keep track of *your* progress without having to worry about uploading any copyrighted material.
+* Version control - Due to the template being setup as a git repository, you can easily keep track of changes you make to the game and even roll them back!
+* SM64DSe integration - Edit your levels like you always have, and build and play your ROM directly with it too!
+* MOM integration - You can use custom objects in the game as the template has MOM preinstalled!
+* Complete build system - Simply double click the builder to get a menu of what to build. This allows you to build ASM hacks, custom overlays, and even DLs to be automatically injected into the game with only a few keystrokes!
+* Hack exporting - Want to have someone else play your hack? The build system has an option to easily give them everything they need to play your romhack!
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Gota7/SM64DS-HackTemplate/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## Credits
+* Gota7 - Template, MOM, ASM hacks.
+* Splatterboy - MOM, ASM hacks.
+* Pants64DS - MOM, ASM hacks.
+* Josh65536 - ASM hacks.
