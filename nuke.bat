@@ -1,1 +1,2 @@
 python nuke.py
+PAUSE
