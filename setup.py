@@ -3,14 +3,14 @@
 #   2022 Gota7.
 #
 
-from io import SEEK_END, SEEK_SET
-import struct
 import Lib.ht_common as ht_common
 import Lib.xdelta as xdelta
 import fileManager as fs
+from io import SEEK_END, SEEK_SET
 import nuke
 import os
 import shutil
+import struct
 
 # Remove old hack.
 def check_remove_old_hack():
@@ -97,6 +97,8 @@ def make_patch(rom_path):
             new_ov = open(os.path.join(rom_name, "__ROM__", "Arm9", str(i) + ".bin"), "wb")
             new_ov.seek(0, SEEK_SET)
             new_ov.write(old_ov.read(0x54)) # Write header.
+            old_ov.seek(0x68, SEEK_SET)
+            file_ids = old_ov.read(0x8)
             old_ov.close()
             old_ovd = fs.fs_get_overlay_from_id(old_ovs, i)
             old_load_addr = int(old_ovd["RAMAddress"][2:], 16)
@@ -105,10 +107,14 @@ def make_patch(rom_path):
             new_max_addr = new_min_addr + int(new_ovd["RAMSize"][2:], 16)
             for j in range(0x54, len(new_ov_dat), 4):
                 dat = struct.unpack_from("<I", new_ov_dat, j)[0]
-                if dat >= new_min_addr and dat < new_max_addr:
-                    new_ov.write(struct.pack("<I", dat - new_min_addr + old_load_addr))
+                if j == 0x68:
+                    new_ov.write(file_ids) # OV0 IDs.
+                elif j == 0x6C:
+                    pass # Already taken care of above.
+                elif dat >= new_min_addr and dat < new_max_addr:
+                    new_ov.write(struct.pack("<I", dat - new_min_addr + old_load_addr)) # Adjust pointer.
                 else:
-                    new_ov.write(struct.pack("<I", dat))
+                    new_ov.write(struct.pack("<I", dat)) # No change.
             new_ov.close()
 
     # Now remove identical files.
