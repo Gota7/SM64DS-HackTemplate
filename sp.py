@@ -15,6 +15,12 @@ def replace_arm9(new_file_path):
     new_file.close()
     old_file.close()
 
+# Rename a file.
+def rename_file(old_file, new_file):
+    if old_file.isnumeric():
+        old_file = fs.fs_get_file_name_from_ov0_id(int(old_file))
+    fs.fs_rename_file(old_file, new_file)
+
 # Replace an overlay.
 def replace_overlay(id, new_file_path):
     new_file = open(new_file_path, "rb")
@@ -52,7 +58,7 @@ def run_patch_command(patch_dir, command, args):
     elif command == "replace_overlay":
         print("ERR: Feature not implemented yet!")
     elif command == "rename":
-        print("ERR: Feature not implemented yet!")
+        rename_file(args[0], args[1])
     elif command == "import_xml":
         print("WARN: Importing level XML is unsupported and so does nothing!")
     elif command == "add_overlay":

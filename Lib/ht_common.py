@@ -4,10 +4,34 @@
 #
 
 import os
+import hashlib
 import urllib.request
 import subprocess
 import sys
 import zipfile
+
+# Get the hash of a file.
+def sha256sum(filename):
+    h  = hashlib.sha256()
+    b  = bytearray(128*1024)
+    mv = memoryview(b)
+    with open(filename, 'rb', buffering=0) as f:
+        while n := f.readinto(mv):
+            h.update(mv[:n])
+    return h.hexdigest()
+
+# Remove a dir if empty.
+def remove_empty_dir(path):
+    try:
+        os.rmdir(path)
+    except OSError:
+        pass
+
+# Remove empty directories.
+def remove_empty_dirs(path):
+    for root, dirnames, filenames in os.walk(path, topdown=False):
+        for dirname in dirnames:
+            remove_empty_dir(os.path.realpath(os.path.join(root, dirname)))
 
 # For calling an external program.
 def call_program(program, dir = "", out = None, err = None):

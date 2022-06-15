@@ -74,6 +74,13 @@ def fs_write_overlays(overlays, arm7 = False):
     ov_file.write(json.dumps(overlays, indent=2))
     ov_file.close()
 
+# Get an overlay from an id.
+def fs_get_overlay_from_id(ovs, id):
+    for ov in ovs:
+        if ov["Id"] == id:
+            return ov
+    return None
+
 # Get file listing sorted by file ID. Overlays will start with @7_ID or @9_ID.
 def fs_get_filelist():
     files = []
