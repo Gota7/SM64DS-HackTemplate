@@ -324,4 +324,6 @@ def compile_overlay(ov_name):
 
         # Add overlay to filesystem if not present.
         if not fs.fs_name_exists(id_name):
-            fs.fs_add_file(id_name)
+            commands = fs.fs_read_command_list()
+            commands.append(("add", id_name, ""))
+            fs.fs_write_command_list(commands)

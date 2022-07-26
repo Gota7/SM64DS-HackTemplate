@@ -21,7 +21,7 @@ def build_rom():
     if not os.path.exists("Base") or not os.path.exists("Conversions") or not os.path.exists(rom_name):
         print("ERR: Base ROM and hack folders are not present! Did you run \"setup.py\" first?")
         exit(0)
-    fs.fs_apply_command_list()
+    fs.fs_apply_command_list(fs.fs_read_command_list())
     # Linux hack - use Ndst-Lin.
     if sys.platform == "linux" or sys.platform == "linux2":
         ht_common.run_ndst("-n " + os.path.join("..", "Base") + " " + os.path.join("..", ht_common.get_rom_name()) + " " + os.path.join("..", "Conversions") + " " + os.path.join("..", ht_common.get_rom_name()) + ".nds")
@@ -140,8 +140,11 @@ def build_overlays():
     # Get list of JSON overlays to compile.
     for file_tuple in os.walk(os.path.join("ASM", "Overlays")):
         for file in file_tuple[2]:
-            if file.endswith(".json"):
+            if file.endswith(".json") and file != "filenames.json":
                 cc.compile_overlay(file[0:file.rfind(".")])
+    fs.fs_apply_command_list(fs.fs_read_command_list())
+    if os.path.exists(os.path.join("ASM", "Overlays", "filenames.json")):
+        cc.compile_overlay("filenames")
     input("Overlay insertion finished. Press Enter to continue...")
 
 # Clean overlays.

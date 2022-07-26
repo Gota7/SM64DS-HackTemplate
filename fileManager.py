@@ -301,19 +301,22 @@ def fs_read_command_list():
 # Write a command list.
 def fs_write_command_list(commands):
     commands.sort(key = lambda y: y[1])
+    lines = []
     with open("fileOperations.txt", "w") as file:
         for c in commands:
             line = c[0]
-            if type(c[1] == int):
+            if type(c[1]) == int:
                 line += " " + hex(c[1])
             else:
                 line += " " + c[1]
             if c[2] != "":
-                if type(c[2] == int):
-                    line += " " + hex(c[1])
+                if type(c[2]) == int:
+                    line += " " + hex(c[2])
                 else:
                     line += " " + c[2]
-            file.write(line)
+            if not line in lines: # Prevent duplicates.
+                file.write(line)
+                lines.append(line)
 
 # Apply a command list.
 def fs_apply_command_list(commands):
