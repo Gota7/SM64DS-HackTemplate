@@ -4377,7 +4377,7 @@ Created by: Gota7</description>
 	<object id='513'>
 		<category>1</category>
 		<name>Silver Coin</name>
-		<internalname>@CUSTOM%MG/003_silverCoin.bmd</internalname>
+		<internalname>@CUSTOM%MOM/silverCoin.bmd</internalname>
 		<actorid>513</actorid>
 		<description>Acts just like a stationary coin, except that it does not increment the player's health. There are no parameters, unlike a coin.
 

@@ -1,0 +1,9 @@
+{
+    "type": "overlay",
+    "id_name": "156",
+    "code_addr": "0x23ec400",
+    "files": [
+        "mom/main.cpp",
+        "mom/SilverCoin.cpp"
+    ]
+}

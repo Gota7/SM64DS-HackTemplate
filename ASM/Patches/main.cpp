@@ -8,10 +8,10 @@ void Initialize()
 {
 
 	// Load the test overlay.
-	LoadOverlay(false, 155);
+	// LoadOverlay(false, 155);
 
 	// Load the MOM overlay.
-	// LoadOverlay(false, 156);
+	LoadOverlay(false, 156);
 
 }
 

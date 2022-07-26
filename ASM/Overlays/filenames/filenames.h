@@ -2072,25 +2072,12 @@ consteval uint16_t GetID(const char* name)
         {0x808, "data/wipe/wipe_yoshi.bmd"},
         {0x809, "data/Y_vs_wait_1P.bca"}
     };
-
-	const File* begin = &filenameList[0];
-	const File* end = &filenameList[sizeof(filenameList) / sizeof(filenameList[0])];
-	const File* prevMid = nullptr;
-
-	while (true)
-	{
-		const File* mid = begin + (end - begin >> 1);
-		if (void FileNotFound(); mid == prevMid) FileNotFound();
-		prevMid = mid;
-
-		const char* c0 = name;
-		const char* c1 = mid->name;
-
-		for(; *c0 == *c1; ++c0, ++c1)
-			if (*c0 == '\0') return mid->ov0ID;
-
-		if (*c0 < *c1) end = mid; else begin = mid;
-	}
+    for (int i = 0; i < sizeof(filenameList) / sizeof(filenameList[0]); i++)
+    {
+        if (filenameList[i].name == name) return filenameList[i].ov0ID;
+    }
+    void FileNotFound();
+    FileNotFound();
 }
 
 #endif
