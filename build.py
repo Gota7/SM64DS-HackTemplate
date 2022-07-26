@@ -138,6 +138,7 @@ def build_overlays():
         shutil.rmtree(ov_build_path)
 
     # Get list of JSON overlays to compile.
+    fs.fs_apply_command_list(fs.fs_read_command_list())
     for file_tuple in os.walk(os.path.join("ASM", "Overlays")):
         for file in file_tuple[2]:
             if file.endswith(".json") and file != "filenames.json":

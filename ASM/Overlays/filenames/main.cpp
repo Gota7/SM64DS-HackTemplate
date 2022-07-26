@@ -1,4 +1,4 @@
-#include "filenames.h"
+#include "filenamesWhole.h" // This file is GENERATED!
 #include "SM64DS_2.h"
 
 // Load OV0 IDs from custom filename list instead of normal overlay. DO NOT MOVE THIS FUNCTION, IT HAS TO BE DEFINED FIRST IN THE OVERLAY!!!

@@ -117,18 +117,52 @@ def fs_write_filelist(files):
 def fs_get_ov0_filename_tuples():
     def_file = open(os.path.join("ASM", "Overlays", "filenames", "filenames.h"), "r")
     vals = []
-    curr_ind = 0
     for line in def_file.readlines():
-        if "\"" in line:
-            vals.append((curr_ind, line.split("\"")[1]))
-            curr_ind += 1
+        if "{0x" in line:
+            data = line.split("{")[1].split("}")[0].replace("\"", "").replace(" ", "").split(",")
+            vals.append((int(data[0][2:], 16), data[1]))
     def_file.close()
+    vals.sort(key=lambda y: y[0])
     return vals
 
 # Write a list of OV0 and file path values.
 def fs_set_ov0_filename_tuples(vals):
     vals.sort(key=lambda y: y[0])
+    orig_lines_file = open(os.path.join("ASM", "Overlays", "filenames", "filenamesBak.h"), "r")
+    orig_lines = orig_lines_file.readlines()
+    orig_lines_file.close()
     def_file = open(os.path.join("ASM", "Overlays", "filenames", "filenames.h"), "w")
+    stop_pos = 0
+    for line in orig_lines:
+        if "{0x" in line:
+            break
+        else:
+            def_file.write(line)
+            stop_pos += 1
+
+    # Convert values to array.
+    res = [None] * (vals[len(vals) - 1][0] + 1)
+    for val in vals:
+        res[val[0]] = val[1]
+    for i in range(0, len(res)):
+        if not res[i]:
+            res[i] = "data/sound_data.sdat" # Need something to fill the gap, do sound_data.sdat since its path is hardcoded to the game.
+
+    # Print values.
+    for i in range(0, len(res)):
+        if i == len(res) - 1:
+            suffix = "\n"
+        else:
+            suffix = ",\n"
+        def_file.write("        {" + hex(i) + ", \"" + res[i] + "\"}" + suffix)
+    for i in range(stop_pos, len(orig_lines)):
+        line = orig_lines[i]
+        if not "{0x" in line:
+            def_file.write(line)
+    def_file.close()
+
+    # Other one this time.
+    def_file = open(os.path.join("ASM", "Overlays", "filenames", "filenamesWhole.h"), "w")
     def_file.write("#ifndef FILENAMES_H\n")
     def_file.write("#define FILENAMES_H\n")
     def_file.write("\n")
