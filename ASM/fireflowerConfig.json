@@ -2,7 +2,8 @@
     "build": {
 
         "include-directories": [
-            "include"
+            "include",
+            "Patches/title"
         ],
 
         "source": "Patches",

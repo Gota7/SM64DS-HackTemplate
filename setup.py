@@ -90,6 +90,8 @@ def make_patch(rom_path):
     old_ovs = fs.fs_get_overlays()
     for i in range(103, 155):
         if os.path.exists(os.path.join(rom_name, "__ROM__", "Arm9", str(i) + ".bin")):
+
+            # Get overlay data and write header.
             old_ov = open(os.path.join("Base", "__ROM__", "Arm9", str(i) + ".bin"), "rb")
             new_ov = open(os.path.join(rom_name, "__ROM__", "Arm9", str(i) + ".bin"), "rb")
             new_ov_dat = new_ov.read()
@@ -97,14 +99,20 @@ def make_patch(rom_path):
             new_ov = open(os.path.join(rom_name, "__ROM__", "Arm9", str(i) + ".bin"), "wb")
             new_ov.seek(0, SEEK_SET)
             new_ov.write(old_ov.read(0x54)) # Write header.
+
+            # Get file ids.
             old_ov.seek(0x68, SEEK_SET)
             file_ids = old_ov.read(0x8)
             old_ov.close()
+
+            # Fetch addresses to adjust offsets.
             old_ovd = fs.fs_get_overlay_from_id(old_ovs, i)
             old_load_addr = int(old_ovd["RAMAddress"][2:], 16)
             new_ovd = fs.fs_get_overlay_from_id(new_ovs, i)
             new_min_addr = int(new_ovd["RAMAddress"][2:], 16)
             new_max_addr = new_min_addr + int(new_ovd["RAMSize"][2:], 16)
+
+            # Write overlay data.
             for j in range(0x54, len(new_ov_dat), 4):
                 dat = struct.unpack_from("<I", new_ov_dat, j)[0]
                 if j == 0x68:
@@ -115,6 +123,17 @@ def make_patch(rom_path):
                     new_ov.write(struct.pack("<I", dat - new_min_addr + old_load_addr)) # Adjust pointer.
                 else:
                     new_ov.write(struct.pack("<I", dat)) # No change.
+
+            # Adjust DL data.
+            while new_ov.tell() % 4 != 0:
+                new_ov.write(bytearray(1))
+            dls_off = new_ov.tell()
+            new_ov.seek(0x7F, SEEK_SET)
+            new_ov.write(bytearray([new_ov_dat[0x7F] | 0x10]))
+            new_ov.seek(0x30, SEEK_SET)
+            new_ov.write(struct.pack("<I", dls_off))
+            new_ov.seek(0, SEEK_END)
+            new_ov.write(struct.pack("<I", 0))
             new_ov.close()
 
     # Now remove identical files.

@@ -3,6 +3,7 @@
 #   2022 Gota7.
 #
 
+import shutil
 import Lib.ht_common as ht_common
 import json
 import os
@@ -13,6 +14,12 @@ def fs_check_folders():
     if not os.path.exists("Base") or not os.path.exists(ht_common.get_rom_name()):
         print("ERR: Base and hack paths not found! Did you run \"setup.py\"?")
         exit(0)
+
+# Restore from a backup.
+def fs_restore_base():
+    fs_check_folders()
+    shutil.copyfile(os.path.join("ASM", "Overlays", "filenames", "filenamesBak.h"), os.path.join("ASM", "Overlays", "filenames", "filenames.h"))
+    shutil.copyfile(os.path.join("Base", "__ROM__", "files.txt"), os.path.join(ht_common.get_rom_name(), "__ROM__", "files.txt"))
 
 # Fetch a file from the filesystem.
 def fs_get_file(file_path, binary = True):
@@ -267,19 +274,78 @@ def fs_del_file(name):
         if os.path.exists(path):
             os.remove(path)
 
+# Read a command list.
+def fs_read_command_list():
+    ret = []
+    if os.path.exists("fileOperations.txt"):
+        with open("fileOperations.txt", "r") as file:
+            for line in file.readlines():
+                items = line.split()
+                if len(items) > 0:
+                    command = items[0]
+                    if command == "add" or command == "addId" or command == "rename" or command == "delete":
+                        second = items[1]
+                    else:
+                        second = int(items[1][2:], 16)
+                    if len(items) > 2:
+                        if command == "addId":
+                            third = int(items[2][2:], 16)
+                        else:
+                            third = items[2]
+                    else:
+                        third = ""
+                    ret.append((command, second, third))
+    ret.sort(key = lambda y: y[1]) # Needed since files in the same dir must be near each other.
+    return ret
+
+# Write a command list.
+def fs_write_command_list(commands):
+    commands.sort(key = lambda y: y[1])
+    with open("fileOperations.txt", "w") as file:
+        for c in commands:
+            line = c[0]
+            if type(c[1] == int):
+                line += " " + hex(c[1])
+            else:
+                line += " " + c[1]
+            if c[2] != "":
+                if type(c[2] == int):
+                    line += " " + hex(c[1])
+                else:
+                    line += " " + c[2]
+            file.write(line)
+
+# Apply a command list.
+def fs_apply_command_list(commands):
+    fs_restore_base()
+    for c in commands:
+        if c[0] == "add":
+            fs_add_file(c[1])
+        elif c[0] == "addId":
+            fs_add_file(c[1], c[2])
+        elif c[0] == "rename":
+            fs_rename_file(c[1], c[2])
+        elif c[0] == "renameId":
+            fs_rename_file(fs_get_file_name_from_ov0_id(c[1]), c[2])
+        elif c[0] == "delete":
+            fs_del_file(c[1])
+        elif c[0] == "deleteId":
+            fs_del_file(fs_get_file_name_from_ov0_id(c[1]))
+
 # Test.
 if __name__ == "__main__":
     print("SM64DS Hack Template File Manager:")
     print("  2022 Gota7")
     opt = 0
     options = [ "Add file.", "Add file by ov0 id.", "Rename file.", "Rename file by ov0 id.", "Delete file.", "Delete file by ov0 id.", "Convert file name to ov0 id.", "Convert ov0 id to file name.", "Exit." ]
+    commands = fs_read_command_list()
     while opt != len(options):
         sleep(1)
         opt = ht_common.user_options_prompt("Filesystem Options:", options)
         if opt == 1:
             file_name = ht_common.user_prompt("File name to add (blank to cancel)")
             if file_name != "":
-                fs_add_file(file_name)
+                commands.append(("add", file_name, ""))
         elif opt == 2:
             id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
             if id != "":
@@ -289,13 +355,13 @@ if __name__ == "__main__":
                     id = int(id)
                 file_name = ht_common.user_prompt("File name (blank to cancel)")
                 if file_name != "":
-                    fs_rename_file(file_name, id)
+                    commands.append(("addId", file_name, id))
         elif opt == 3:
             file_name = ht_common.user_prompt("File name (blank to cancel)")
             if file_name != "":
                 new_file_name = ht_common.user_prompt("New file name (blank to cancel)")
                 if new_file_name != "":
-                    fs_rename_file(file_name, new_file_name)
+                    commands.append(("rename", file_name, new_file_name))
         elif opt == 4:
             id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
             if id != "":
@@ -310,11 +376,11 @@ if __name__ == "__main__":
                         print("ERR: Can not find file with given ov0 id!")
                         exit(0)
                     else:
-                        fs_rename_file(file_name, new_file_name)
+                        commands.append(("renameId", id, new_file_name))
         elif opt == 5:
             file_name = ht_common.user_prompt("File name to delete (blank to cancel)")
             if file_name != "":
-                fs_del_file(file_name)
+                commands.append(("del", file_name, ""))
         elif opt == 6:
             id = ht_common.user_prompt("Overlay 0 id for file (blank to cancel)")
             if id != "":
@@ -327,7 +393,7 @@ if __name__ == "__main__":
                     print("ERR: Can not find file with given ov0 id!")
                     exit(0)
                 else:
-                    fs_del_file(file_name)
+                    commands.append(("delId", id, ""))
         elif opt == 7:
             file_name = ht_common.user_prompt("File name (blank to cancel)")
             if file_name != "":
@@ -350,3 +416,4 @@ if __name__ == "__main__":
                     exit(0)
                 else:
                     print(file_name)
+        fs_write_command_list()
