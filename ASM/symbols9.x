@@ -334,7 +334,7 @@ _ZN11ShadowModelD0Ev                                                            
 _ZN11ShadowModelD1Ev                                                              = 0x02015ff8;
 _ZN11ShadowModelC1Ev                                                              = 0x02016068;
 
-_ZN10ModelAnim24CopyERK10ModelAnim2Pcj                                            = 0x02016254;
+_ZN10ModelAnim24CopyERKS_Pcj                                                      = 0x02016254;
 
 _ZN9ModelAnim7SetAnimEPci5Fix12IiEj                                               = 0x02016748;
 _ZN9ModelAnim6RenderEPK7Vector3                                                   = 0x020167f8;

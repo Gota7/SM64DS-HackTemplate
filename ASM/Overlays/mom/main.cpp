@@ -2,6 +2,7 @@
 #include "../filenames/filenames.h"
 #include "GalaxyShrinkingPlatform.h"
 #include "SilverCoin.h"
+#include "YoshiRide.h"
 
 namespace {
 
@@ -77,5 +78,9 @@ void init()
     // Silver coins.
 	modTable(SILVER_COIN, (unsigned)&SilverCoin::spawnData);
 	SilverCoin::modelFile.Construct(GetID("MOM/silverCoin.bmd"));
+
+	// Rideable yoshis.
+	modTable(YOSHI_RIDE, (unsigned)&YoshiRide::spawnData);
+	YoshiRide::ridingAnim.Construct(GetID("MOM/yoshiRide.bca"));
 
 }

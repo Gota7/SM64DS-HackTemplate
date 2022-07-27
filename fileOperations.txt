@@ -3,3 +3,4 @@ add MOM/galaxyShrinkPlatform.bmd
 add MOM/galaxyShrinkPlatform.kcl
 add MOM/galaxyShrinkPlatformFrame.bmd
 add MOM/silverCoin.bmd
+add MOM/yoshiRide.bca

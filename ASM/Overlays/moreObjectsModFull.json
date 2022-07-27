@@ -5,6 +5,7 @@
     "files": [
         "mom/main.cpp",
         "mom/GalaxyShrinkingPlatform.cpp",
-        "mom/SilverCoin.cpp"
+        "mom/SilverCoin.cpp",
+        "mom/YoshiRide.cpp"
     ]
 }
