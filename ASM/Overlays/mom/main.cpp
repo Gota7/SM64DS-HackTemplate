@@ -1,10 +1,11 @@
 #include "SM64DS_2.h"
 #include "../filenames/filenames.h"
+#include "GalaxyShrinkingPlatform.h"
 #include "SilverCoin.h"
 
 namespace {
 
-	//Object IDs.
+	// Object IDs.
 	enum ObjectIDs: short
 	{
 		GALAXY_SHRINKING_PLATFORM = 0x0200,
@@ -54,7 +55,7 @@ namespace {
 		TOX_BOX_FLOWER*/
 	};
 
-	//Modify the object and actor tables.
+	// Modify the object and actor tables.
 	void modTable(short int val, unsigned newFunc)
 	{
 		OBJ_TO_ACTOR_ID_TABLE[val] = val;
@@ -63,11 +64,17 @@ namespace {
 
 }
 
-//Initialize the objects.
+// Initialize the objects.
 void init()
 {
 
-    //Silver coins.
+	// Galaxy platforms.
+	modTable(GALAXY_SHRINKING_PLATFORM, (unsigned)&GalaxyShrinkingPlatform::spawnData);
+	GalaxyShrinkingPlatform::modelFile.Construct(GetID("MOM/galaxyShrinkPlatform.bmd"));
+    GalaxyShrinkingPlatform::clsnFile.Construct(GetID("MOM/galaxyShrinkPlatform.kcl"));
+    GalaxyShrinkingPlatform::frameModelFile.Construct(GetID("MOM/galaxyShrinkPlatformFrame.bmd"));
+
+    // Silver coins.
 	modTable(SILVER_COIN, (unsigned)&SilverCoin::spawnData);
 	SilverCoin::modelFile.Construct(GetID("MOM/silverCoin.bmd"));
 

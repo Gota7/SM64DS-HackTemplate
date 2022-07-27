@@ -4366,7 +4366,7 @@ F - Same as 3?
 	<object id='512'>
 		<category>1</category>
 		<name>Galaxy Shrinking Platform</name>
-		<internalname>@CUSTOM%MG/000_galaxyShrinkPlatformFrame.bmd</internalname>
+		<internalname>@CUSTOM%MOM/galaxyShrinkPlatformFrame.bmd</internalname>
 		<actorid>512</actorid>
 		<description>A platform that shrinks when the player lands on it, but respawns after the player is a certain range away.
 

@@ -1,0 +1,5 @@
+add Code/test.bin
+add MOM/galaxyShrinkPlatform.bmd
+add MOM/galaxyShrinkPlatform.kcl
+add MOM/galaxyShrinkPlatformFrame.bmd
+add MOM/silverCoin.bmd
