@@ -5351,7 +5351,7 @@ Created by: Splatterboy
 	<object id='550'>
 		<category>1</category>
 		<name>Treasure Chest</name>
-		<internalname>@CUSTOM%MG/071_treasureChest.bmd</internalname>
+		<internalname>@CUSTOM%MOM/t_box.bmd</internalname>
 		<actorid>550</actorid>
 		<description>A treasure chest.
 

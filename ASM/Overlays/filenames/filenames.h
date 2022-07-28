@@ -2070,7 +2070,16 @@ consteval uint16_t GetID(const char* name)
         {0x806, "data/wipe/wipe_star.bmd"},
         {0x807, "data/wipe/wipe_wario.bmd"},
         {0x808, "data/wipe/wipe_yoshi.bmd"},
-        {0x809, "data/Y_vs_wait_1P.bca"}
+        {0x809, "data/Y_vs_wait_1P.bca"},
+        {0x80a, "Code/test.bin"},
+        {0x80b, "MOM/characterBlockTransWario.bmd"},
+        {0x80c, "MOM/galaxyShrinkPlatform.bmd"},
+        {0x80d, "MOM/galaxyShrinkPlatform.kcl"},
+        {0x80e, "MOM/galaxyShrinkPlatformFrame.bmd"},
+        {0x80f, "MOM/silverCoin.bmd"},
+        {0x810, "MOM/t_box.bmd"},
+        {0x811, "MOM/t_box_open.bca"},
+        {0x812, "MOM/yoshiRide.bca"}
     };
     for (int i = 0; i < sizeof(filenameList) / sizeof(filenameList[0]); i++)
     {

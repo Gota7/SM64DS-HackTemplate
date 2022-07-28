@@ -1,6 +1,9 @@
 add Code/test.bin
+add MOM/characterBlockTransWario.bmd
 add MOM/galaxyShrinkPlatform.bmd
 add MOM/galaxyShrinkPlatform.kcl
 add MOM/galaxyShrinkPlatformFrame.bmd
 add MOM/silverCoin.bmd
+add MOM/t_box.bmd
+add MOM/t_box_open.bca
 add MOM/yoshiRide.bca

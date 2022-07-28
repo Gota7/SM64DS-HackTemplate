@@ -2,6 +2,8 @@
 #include "../filenames/filenames.h"
 #include "GalaxyShrinkingPlatform.h"
 #include "SilverCoin.h"
+#include "TreasureChest.h"
+#include "TreeShadow.h"
 #include "YoshiRide.h"
 
 namespace {
@@ -82,5 +84,14 @@ void init()
 	// Rideable yoshis.
 	modTable(YOSHI_RIDE, (unsigned)&YoshiRide::spawnData);
 	YoshiRide::ridingAnim.Construct(GetID("MOM/yoshiRide.bca"));
+
+	// Tree shadows.
+	modTable(TREE_SHADOW, (unsigned)&TreeShadow::spawnData);
+	TreeShadow::modelFile.Construct(GetID("MOM/characterBlockTransWario.bmd"));
+
+	// Treasure chest.
+	modTable(TREASURE_CHEST, (unsigned)&TreasureChest::spawnData);
+	TreasureChest::modelFile.Construct(GetID("MOM/t_box.bmd"));
+	TreasureChest::animFiles[0].Construct(GetID("MOM/t_box_open.bca"));
 
 }
