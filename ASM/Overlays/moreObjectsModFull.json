@@ -6,6 +6,7 @@
         "mom/main.cpp",
         "mom/GalaxyShrinkingPlatform.cpp",
         "mom/SilverCoin.cpp",
+        "mom/ToxicLevel.cpp",
         "mom/TreasureChest.cpp",
         "mom/TreeShadow.cpp",
         "mom/YoshiRide.cpp"

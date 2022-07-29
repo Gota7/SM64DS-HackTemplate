@@ -36,7 +36,7 @@ GalaxyShrinkingPlatform* GalaxyShrinkingPlatform::Spawn()
 
 
 void GalaxyShrinkingPlatform::OnFloorAfterClsn(MeshCollider& clsn, Actor* clsnActor, Actor* otherActor) {
-
+	if (!clsnActor) return;
 	static_cast<GalaxyShrinkingPlatform*>(clsnActor)->shrinkActivated = true;
 	//static_cast<GalaxyShrinkingPlatform*>(clsnActor)->playSound = true;
 }
@@ -96,6 +96,7 @@ int GalaxyShrinkingPlatform::InitResources()
 
 	clsn.beforeClsnCallback = (decltype(clsn.beforeClsnCallback))0x02039348;
 	clsn.afterClsnCallback = &OnFloorAfterClsn;
+	clsn.Enable(this);
 
 	UpdateModelTransform();
 	UpdateClsnPosAndRot();

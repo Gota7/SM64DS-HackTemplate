@@ -2,6 +2,7 @@
 #include "../filenames/filenames.h"
 #include "GalaxyShrinkingPlatform.h"
 #include "SilverCoin.h"
+#include "ToxicLevel.h"
 #include "TreasureChest.h"
 #include "TreeShadow.h"
 #include "YoshiRide.h"
@@ -84,6 +85,9 @@ void init()
 	// Rideable yoshis.
 	modTable(YOSHI_RIDE, (unsigned)&YoshiRide::spawnData);
 	YoshiRide::ridingAnim.Construct(GetID("MOM/yoshiRide.bca"));
+
+	// Toxic level.
+	modTable(TOXIC_LEVEL, (unsigned)&ToxicLevel::spawnData);
 
 	// Tree shadows.
 	modTable(TREE_SHADOW, (unsigned)&TreeShadow::spawnData);

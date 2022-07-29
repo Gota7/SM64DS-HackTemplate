@@ -1218,16 +1218,16 @@ extern "C"
 	extern Player* PLAYER_ARR[4];
 	extern Input INPUT_ARR[4];
 	extern uint16_t HEALTH_ARR[4];
-	
+
 	extern uint8_t CURRENT_GAMEMODE; // 0 = adventure, 1 = VS, 2 = ???
-	
-	extern Actor* SILVER_STARS[12];	
+
+	extern Actor* SILVER_STARS[12];
 	extern ActorDeathTable ACTOR_DEATH_TABLE_ARR[3]; //maximum three parts per level.
-	
+
 	extern ActorBase* ROOT_ACTOR_BASE;
-	
+
 	extern uint16_t* DEATH_BY_GIANT_SPAWN_TABLE;
-	
+
 	extern ActorBase::ProcessingListNode* FIRST_BEHAVIOR_LIST_NODE;
 	extern ActorBase::ProcessingListNode* FIRST_RENDER_LIST_NODE;
 	extern EnemyDeathFunc ENEMY_DEATH_FUNCS[8];
@@ -1235,6 +1235,7 @@ extern "C"
 	extern Fix12i FALL_DAMAGE_BIG;
 	extern Fix12i FALL_DAMAGE_SMALL;
 
+	extern uint8_t PLAYER_HEALTH;
 	extern uint8_t GAME_PAUSED; // 0 = not paused, 1 = paused, 2 = unpausing
 	extern uint32_t LEVEL_SELECT;
 

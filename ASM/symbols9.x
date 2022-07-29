@@ -1046,6 +1046,8 @@ LEVEL_SELECT                                                                    
 FALL_DAMAGE_BIG = 0x020e2e88;
 FALL_DAMAGE_SMALL = 0x020e2e9c;
 
+PLAYER_HEALTH = 0x02092145;
+
 _ZN9ActorBase7ProcessEMS_FivEMS_FbvEMS_FvjE = 0x02043c88;
 
 /* an array of pointers to kuppa scripts of star cutscenes: 0x020876e4 */
