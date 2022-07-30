@@ -312,6 +312,7 @@ _ZN18TextureTransformerC1Ev                                                     
 _ZN15TextureSequence7PrepareEPcS0_                                                = 0x0201597c;
 _ZN15TextureSequence6UpdateER15ModelComponents                                    = 0x02015988;
 _ZN15TextureSequence7SetFileEPcN9Animation5FlagsE5Fix12IiEj                       = 0x020159ac;
+_ZN15TextureSequence7SetFileEPci5Fix12IiEj							              = 0x020159ac;
 _ZN15TextureSequenceD0Ev                                                          = 0x02015A00;
 _ZN15TextureSequenceD1Ev                                                          = 0x02015a2c;
 _ZN15TextureSequenceC1Ev                                                          = 0x02015a50;

@@ -4399,7 +4399,7 @@ Created by: Gota7</description>
 	<object id='515'>
 		<category>1</category>
 		<name>Berry</name>
-		<internalname>@CUSTOM%MG/007_berryStem.bmd</internalname>
+		<internalname>@CUSTOM%MOM/berryStem.bmd</internalname>
 		<actorid>515</actorid>
 		<description>A berry that Yoshi can eat and gain coins from after a certain amount.
 Parameter 1:
@@ -4650,7 +4650,7 @@ Created by: Gota7
 	<object id='525'>
 		<category>1</category>
 		<name>Shy Guy</name>
-		<internalname>@CUSTOM%MG/013_shyGuy.bmd</internalname>
+		<internalname>@CUSTOM%MOM/shyGuy.bmd</internalname>
 		<actorid>525</actorid>
 		<description>The shy guy enemy from SMB2, but in 3d.
 
@@ -5105,7 +5105,7 @@ Created by: Splatterboy
 	<object id='540'>
 		<category>1</category>
 		<name>Save Block</name>
-		<internalname>@CUSTOM%MG/048_saveBlock.bmd</internalname>
+		<internalname>@CUSTOM%MOM/saveBlock.bmd</internalname>
 		<actorid>540</actorid>
 		<description>Saves the game.
 
@@ -5117,7 +5117,7 @@ Created by: Splatterboy
 	<object id='541'>
 		<category>1</category>
 		<name>Star Chip</name>
-		<internalname>@CUSTOM%MG/051_starChip.bmd</internalname>
+		<internalname>@CUSTOM%MOM/starChip.bmd</internalname>
 		<actorid>541</actorid>
 		<description>The Star Chips from Super Mario Galaxy, collect 5 to spawn a Launch Star.
 
@@ -5370,7 +5370,7 @@ Ported by: Splatterboy
 	<object id='551'>
 		<category>1</category>
 		<name>Thwomp</name>
-		<internalname>@CUSTOM%MG/073_thwomp.bmd</internalname>
+		<internalname>@CUSTOM%MOM/thwomp.bmd</internalname>
 		<actorid>551</actorid>
 		<description>An angry stone that smashes the ground, then returns to it's initial position. Can be smashed to bits by Mega Players.
 
@@ -5383,7 +5383,7 @@ Ported by: Splatterboy
 	<object id='552'>
 		<category>1</category>
 		<name>Magma Thwomp</name>
-		<internalname>@CUSTOM%MG/076_thwompMagma.bmd</internalname>
+		<internalname>@CUSTOM%MOM/thwompMagma.bmd</internalname>
 		<actorid>552</actorid>
 		<description>A Thwomp that's so hot, you get burned if you get close to it.
 
@@ -5397,7 +5397,7 @@ Idea from: Hailbot
 	<object id='553'>
 		<category>1</category>
 		<name>Giga Thwomp</name>
-		<internalname>@CUSTOM%MG/077_thwompGiga.bmd</internalname>
+		<internalname>@CUSTOM%MOM/thwompGiga.bmd</internalname>
 		<actorid>553</actorid>
 		<description>Giga Thwomp.
 Still WIP, do not place this in a level!

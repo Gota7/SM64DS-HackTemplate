@@ -17,7 +17,7 @@ namespace Sound
 		RC_PLAYER2, //???
 		RC_STREAM //D.N.E. (Does Not Exist) for SM64DS
 	};
-	
+
 	struct SDAT_Header
 	{
 		struct Block
@@ -33,14 +33,14 @@ namespace Sound
 		Block symbolBlock;
 		Block infoBlock;
 		Block FAT;
-		Block fileBlock;		
+		Block fileBlock;
 	};
-		
+
 	struct SymbolBlock
 	{
-		
+
 	};
-	
+
 	struct InfoSequenceEntry
 	{
 		unsigned fileID;
@@ -50,24 +50,24 @@ namespace Sound
 		uint8_t polyphonicPressure; //???
 		uint8_t play; //???
 		uint16_t padding;
-		
+
 		static InfoSequenceEntry* GetWithID(unsigned seqID);
 	};
-	
+
 	struct InfoInstrumentBankEntry
 	{
 		unsigned fileID;
 		uint16_t waveArchiveIDs[4];
-		
+
 		static InfoInstrumentBankEntry* GetWithID(unsigned bankID);
 	};
-	
+
 	struct InfoBlockRecord
 	{
 		unsigned count;
 		unsigned entryOffsets[]; //size = count
 	};
-	
+
 	struct InfoBlock
 	{
 		char magic[4]; //"INFO"
@@ -75,27 +75,27 @@ namespace Sound
 		unsigned recordOffsets[8];
 		char padding[0x18];
 	};
-	
+
 	struct FAT
 	{
-		
+
 	};
-	
+
 	struct FileBlock
 	{
-		
+
 	};
-	
+
 	struct Sequence
 	{
-		
+
 	};
-	
+
 	struct InstrumentBank
 	{
-		
+
 	};
-	
+
 	struct WaveArchive
 	{
 		char magic[4]; //"SWAR"
@@ -104,7 +104,7 @@ namespace Sound
 		uint16_t headerSize;
 		uint16_t one;
 	};
-	
+
 	struct SDAT_RAM
 	{
 		SDAT_Header header;
@@ -130,12 +130,12 @@ namespace Sound
 		FAT* fileAllocTable;
 		unsigned unk80;
 		InfoBlock* infoBlock;
-		
+
 		static SDAT_RAM* PTR;
-		
+
 	};
 
-	
+
 	struct SequenceArchive
 	{
 		char magic[4]; //"SSAR"
@@ -144,14 +144,14 @@ namespace Sound
 		unsigned size; //includes header
 		unsigned dataOffset; //0x10
 		unsigned unke;
-		
+
 		struct Data
 		{
 			char magic[4]; //"DATA"
 			unsigned size;
 			unsigned sampleDefSize;
 			unsigned numSamples;
-			
+
 			struct SampleDef
 			{
 				unsigned unk0;
@@ -163,10 +163,10 @@ namespace Sound
 				uint8_t unka;
 				uint8_t unkb;
 			} sampleDefs[];
-			
+
 		} data;
 	};
-	
+
 	struct FileRef //guess
 	{
 		FileRef** unk0;
@@ -188,10 +188,10 @@ namespace Sound
 		uint8_t unk3d;
 		uint8_t unk3e;
 		uint8_t unk3f;
-		
+
 		static FileRef* PTR_0; //there's one after it, but it's, as far as I know, not referred to exactly.
 	};
-	
+
 	struct Player //not to be confused with ::Player
 	{
 		FileRef* fileRef;
@@ -203,7 +203,7 @@ namespace Sound
 		unsigned unk14;
 		unsigned unk18;
 	};
-	
+
 	enum MusicID
 	{
 		MU_STAR_SELECT = 0x16,
@@ -228,30 +228,28 @@ namespace Sound
 		MU_LULLABY = 0x36,
 		MU_BOB_OMB_BATTLEFIELD = 0x3a,
 	};
-	
+
 	extern Player PLAYERS[]; //size not known, but greater than 9.
-	
+
 	unsigned PlayLong(unsigned uniqueID, unsigned soundArchiveID, unsigned soundID, const Vector3& camSpacePos, unsigned arg4); //first arg = guess
-	
+
 	void PlayCharVoice(unsigned charID, unsigned soundID, const Vector3& camSpacePos);
-	
+
 	void Play(unsigned archiveID, unsigned soundID, const Vector3& camSpacePos);
 	void PlayBank0(unsigned soundID, const Vector3& camSpacePos);
 	void PlayBank3(unsigned soundID, const Vector3& camSpacePos);
 	void PlayBank2_2D(unsigned soundID);
 	void PlayBank3_2D(unsigned soundID);
-	
+
 	//volume goes up to 0x7f
 	bool PlayMsgSound(unsigned soundID, unsigned arg1, unsigned volume, Fix12i timeInv, bool starting); //return value: did it finish?
-	
-	void LoadAndSetMusic_Layer2(unsigned musicID);
-	void StopLoadedMusic_Layer2();
-	void LoadAndSetMusic_Layer3(unsigned musicID);
-	void StopLoadedMusic_Layer3();
+
+	void LoadAndSetMusic(unsigned musicID);
+	void StopLoadedMusic();
 	void SetMusic(unsigned arg0, unsigned musicID);
 	void EndMusic(unsigned arg0, unsigned musicID);
 	void UnkPlaySoundFunc(unsigned soundID);
-	
+
 	void ChangeMusicVolume(unsigned newVolume, Fix12i changeSpeed);
 }
 
