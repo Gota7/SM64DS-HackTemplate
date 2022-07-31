@@ -1,3 +1,4 @@
+add AParticle/particle_data.spa
 add Code/test.bin
 add MOM/characterBlockTransWario.bmd
 add MOM/galaxyShrinkPlatform.bmd
