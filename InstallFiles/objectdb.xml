@@ -4391,7 +4391,7 @@ Created by: Gota7</description>
 		<internalname>@CUSTOM%MG/004_invisibleWall.bmd</internalname>
 		<actorid>514</actorid>
 		<description>An invisible wall useful for door spaces.
-		
+
 		Created by: Gota7</description>
 		<bankreq>none</bankreq>
 	</object>
@@ -5032,7 +5032,7 @@ Ported by: Splatterboy
 	<object id='537'>
 		<category>1</category>
 		<name>Colored Warp Pipe</name>
-		<internalname>@CUSTOM%MG/035_coloredPipe.bmd</internalname>
+		<internalname>@CUSTOM%MOM/obj_dokan.bmd</internalname>
 		<actorid>537</actorid>
 		<description>The good old Warp Pipe with a customizable color.
 Does nothing if placed alone. For it to act as an entrance or an exit, the corresponding objects must be placed inside it.
@@ -5062,7 +5062,7 @@ Created by: Splatterboy
 	<object id='538'>
 		<category>1</category>
 		<name>Character Block</name>
-		<internalname>@CUSTOM%MG/037_characterBlockMario.bmd</internalname>
+		<internalname>@CUSTOM%MOM/characterBlockMario.bmd</internalname>
 		<actorid>538</actorid>
 		<description>Permanently switches character without having to go to the character door or having to use caps.
 
@@ -5153,7 +5153,7 @@ Assets by Josh65536
 	<object id='543'>
 		<category>1</category>
 		<name>Colored Coin</name>
-		<internalname>@CUSTOM%MG/054_coloredCoin.bmd</internalname>
+		<internalname>@CUSTOM%MOM/coloredCoin.bmd</internalname>
 		<actorid>543</actorid>
 		<description>A Coin that you can fully customize: you can change it's color, coin value and even it's heal value.
 
@@ -5239,7 +5239,7 @@ Created by: Splatterboy
 	<object id='546'>
 		<category>1</category>
 		<name>Blue Ice Block</name>
-		<internalname>@CUSTOM%MG/062_blueIceBlock.bmd</internalname>
+		<internalname>@CUSTOM%MOM/ice_block_ll.bmd</internalname>
 		<actorid>546</actorid>
 		<description>An indestructible block made of blue ice.
 		</description>
@@ -5302,7 +5302,7 @@ Created by: Splatterboy
 	<object id='549'>
 		<category>1</category>
 		<name>Custom Block</name>
-		<internalname>@CUSTOM%MG/066_customBlockYellow.bmd</internalname>
+		<internalname>@CUSTOM%MOM/obj_hatena_y_box.bmd</internalname>
 		<actorid>549</actorid>
 		<description>A block that you can customise.
 

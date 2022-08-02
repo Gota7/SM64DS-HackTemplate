@@ -5,6 +5,11 @@
     "files": [
         "mom/main.cpp",
         "mom/Berry.cpp",
+        "mom/BlueIceBlock.cpp",
+        "mom/CharacterBlock.cpp",
+        "mom/ColoredCoin.cpp",
+        "mom/ColoredPipe.cpp",
+        "mom/CustomBlock.cpp",
         "mom/GalaxyShrinkingPlatform.cpp",
         "mom/SaveBlock.cpp",
         "mom/ShyGuy.cpp",

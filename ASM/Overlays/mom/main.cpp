@@ -1,6 +1,11 @@
 #include "SM64DS_2.h"
 #include "../filenames/filenames.h"
 #include "Berry.h"
+#include "BlueIceBlock.h"
+#include "CharacterBlock.h"
+#include "ColoredCoin.h"
+#include "ColoredPipe.h"
+#include "CustomBlock.h"
 #include "GalaxyShrinkingPlatform.h"
 #include "SaveBlock.h"
 #include "ShyGuy.h"
@@ -111,19 +116,56 @@ void init()
 	// Skybox rotator.
 	modTable(SKYBOX_ROTATOR, (unsigned)&SkyboxRotator::spawnData);
 
+	// Colored Pipes.
+	modTable(COLORED_PIPE, (unsigned)&ColoredPipe::spawnData);
+	ColoredPipe::modelFile.Construct(GetID("MOM/obj_dokan.bmd"));
+	ColoredPipe::clsnFile.Construct(GetID("MOM/obj_dokan.kcl"));
+
+	// Character Blocks.
+	modTable(CHARACTER_BLOCK, (unsigned)&CharacterBlock::spawnData);
+	CharacterBlock::modelFiles[0].Construct(GetID("MOM/characterBlockMario.bmd"));
+	CharacterBlock::modelFiles[1].Construct(GetID("MOM/characterBlockLuigi.bmd"));
+	CharacterBlock::modelFiles[2].Construct(GetID("MOM/characterBlockWario.bmd"));
+	CharacterBlock::modelFiles[3].Construct(GetID("MOM/characterBlockYoshi.bmd"));
+	CharacterBlock::modelFilesTrans[0].Construct(GetID("MOM/characterBlockTransMario.bmd"));
+	CharacterBlock::modelFilesTrans[1].Construct(GetID("MOM/characterBlockTransLuigi.bmd"));
+	CharacterBlock::modelFilesTrans[2].Construct(GetID("MOM/characterBlockTransWario.bmd"));
+	CharacterBlock::modelFilesTrans[3].Construct(GetID("MOM/characterBlockTransYoshi.bmd"));
+	CharacterBlock::clsnFile.Construct(GetID("MOM/characterBlock.kcl"));
+	CharacterBlock::animFiles[0].Construct(GetID("MOM/characterBlock.bca"));
+	CharacterBlock::animFiles[1].Construct(GetID("MOM/characterBlockTrans.bca"));
+
 	// Tree shadows.
 	modTable(TREE_SHADOW, (unsigned)&TreeShadow::spawnData);
 	TreeShadow::modelFile.Construct(GetID("MOM/characterBlockTransWario.bmd"));
 
-	//Save Blocks.
+	// Save Blocks.
 	modTable(SAVE_BLOCK, (unsigned)&SaveBlock::spawnData);
 	SaveBlock::modelFile.Construct(GetID("MOM/saveBlock.bmd"));
 	SaveBlock::texSeqFile.Construct(GetID("MOM/saveBlock.btp"));
 	SaveBlock::clsnFile.Construct(GetID("MOM/saveBlock.kcl"));
 
+	// Colored Coins.
+	modTable(COLORED_COIN, (unsigned)&ColoredCoin::spawnData);
+	ColoredCoin::modelFile.Construct(GetID("MOM/coloredCoin.bmd"));
+
+	// Blue Ice Blocks.
+	modTable(BLUE_ICE_BLOCK, (unsigned)&BlueIceBlock::spawnData);
+	BlueIceBlock::modelFile.Construct(GetID("MOM/ice_block_ll.bmd"));
+	BlueIceBlock::clsnFile.Construct(GetID("MOM/ice_block_ll.kcl"));
+
 	// Star Chips.
 	modTable(STAR_CHIP, (unsigned)&StarChip::spawnData);
 	StarChip::modelFile.Construct(GetID("MOM/starChip.bmd"));
+
+	// Custom Blocks.
+	modTable(CUSTOM_BLOCK, (unsigned)&CustomBlock::spawnData);
+	CustomBlock::modelFiles[0].Construct(GetID("MOM/obj_hatena_y_box.bmd"));
+	CustomBlock::modelFiles[1].Construct(GetID("MOM/hatena_box.bmd"));
+	CustomBlock::modelFiles[2].Construct(GetID("MOM/hatena_karabox.bmd"));
+	CustomBlock::clsnFile.Construct(GetID("MOM/hatena_box.kcl"));
+	CustomBlock::animFiles[0].Construct(GetID("MOM/characterBlock.bca"));
+	CustomBlock::animFiles[1].Construct(GetID("MOM/hatena_karabox.bca"));
 
 	// Treasure chest.
 	modTable(TREASURE_CHEST, (unsigned)&TreasureChest::spawnData);
