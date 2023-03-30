@@ -2,7 +2,7 @@
 # Build the ROM, ASM hacks, overlays, etc.
 #   2022 Gota7.
 #
-import logging
+import argparse
 
 import Lib.ht_common as ht_common
 import Lib.compiler as cc
@@ -117,7 +117,6 @@ def build_arm9():
 
     # Build a sample ROM for testing without assets if needed.
     ht_common.call_program(os.path.join("toolchain", "Fireflower", "nds-build.exe") + " build_rules.txt " + os.path.join("fireflower_data", "Sample.nds"), "ASM")
-    input("ARM9 patches finished. Press Enter to continue...")
 
 # Clean ARM9.
 def clean_arm9():
@@ -164,8 +163,6 @@ def build_libraries():
 
     fs.fs_apply_command_list(fs.fs_read_command_list())
 
-    input("Overlay insertion finished. Press Enter to continue...")
-
 
 # Clean overlays.
 def clean_libraries():
@@ -209,63 +206,54 @@ def clean_all():
 
 # Main method.
 if __name__ == "__main__":
-    print("SM64DS Hack Template Builder:")
-    print("  2022 Gota7")
-    opt = 0
-    options = []
-    base_options = [ "all.", "all ASM.", "ARM9 patches.", "libraries.", "ROM." ]
-    for option in base_options:
-        options.append("Build " + option)
-        options.append("Clean " + option)
-        options.append("Clean + Build " + option)
-    disable_msg = "Disable autostart ROM on build."
-    enable_msg = "Enable autostart ROM on build."
-    if ht_common.get_rom_autostart():
-        options.append(disable_msg)
-    else:
-        options.append(enable_msg)
-    options.append("Ship ROM xdelta and ZIP.")
-    options.append("Exit.")
-    while opt != len(options):
-        sleep(1)
-        opt = ht_common.user_options_prompt("Build Options:", options)
-        base_opt = (opt - 1) // 3
-        spec = (opt - 1) % 3
-        if base_opt < len(base_options):
-            if base_opt == 0:
-                if spec > 0:
-                    clean_all()
-                if spec != 1:
-                    build_all()
-            if base_opt == 1:
-                if spec > 0:
-                    clean_asm()
-                if spec != 1:
-                    build_asm()
-            if base_opt == 2:
-                if spec > 0:
-                    clean_arm9()
-                if spec != 1:
-                    build_arm9()
-            if base_opt == 3:
-                if spec > 0:
-                    clean_libraries()
-                if spec != 1:
-                    build_libraries()
-            if base_opt == 4:
-                if spec > 0:
-                    nuke.nuke_build_folder()
-                if spec != 1:
-                    build_rom()
-        elif opt == len(options) - 2:
-            if ht_common.get_rom_autostart():
-                os.remove(os.path.join("InstallFiles", "autoBoot"))
-                options[len(options) - 3] = enable_msg
-                print("Build: ROM autostart disabled.")
-            else:
-                file = open(os.path.join("InstallFiles", "autoBoot"), "w")
-                file.close()
-                options[len(options) - 3] = disable_msg
-                print("Build: ROM autostart enabled.")
-        elif opt == len(options) - 1:
-            build_ship()
+    # create the parser object
+    parser = argparse.ArgumentParser(description='SM64DS Hack Template Builder, by Gota7.')
+
+    base_options = ["all", "asm", "ARM9-patches", "libraries", "ROM"]
+    parser.add_argument('--build', dest='build', choices=base_options, help='Will build the given element. Example --build=ROM or --build=all.')
+    parser.add_argument('--clean', dest='clean', choices=base_options, help='Will clean the given element. Example --clean=asm or --clean=all.')
+    parser.add_argument('--auto-boot', type=lambda s: s.lower() in ['true', '1', 't', 'y', 'yes'], default=None, required=False, help='Enable or disable autostart ROM on build (Persistent option). Example --autoBoot=true, or --autoBoot=false')
+    parser.add_argument('--ship-with-xdelta', action='store_true', help='Enable the feature')
+
+    # parse the command line arguments
+    args = parser.parse_args()
+
+    to_build = args.build
+    to_clean = args.clean
+
+    if args.auto_boot is not None:
+        if args.auto_boot:
+            file = open(os.path.join("InstallFiles", "autoBoot"), "w")
+            file.close()
+            print("Build: ROM autostart enabled.")
+        else:
+            os.remove(os.path.join("InstallFiles", "autoBoot"))
+            print("Build: ROM autostart disabled.")
+
+    if to_clean == "all":
+        clean_all()
+    elif to_clean == "asm":
+        clean_asm()
+    elif to_clean == "ARM9-patches":
+        clean_arm9()
+    elif to_clean == "libraries":
+        clean_libraries()
+    elif to_clean == "ROM":
+        nuke.nuke_build_folder()
+
+    if to_clean == "all":
+        build_all()
+    elif to_clean == "asm":
+        build_asm()
+    elif to_clean == "ARM9-patches":
+        build_arm9()
+    elif to_clean == "libraries":
+        build_libraries()
+    elif to_clean == "ROM":
+        build_rom()
+
+    if args.ship_with_xdelta:
+        build_ship()
+
+    if to_build is None and to_clean is None and args.auto_boot is None and not args.ship_with_xdelta:
+        parser.print_help()
