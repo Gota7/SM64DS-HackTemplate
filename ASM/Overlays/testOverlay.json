@@ -1,8 +1,0 @@
-{
-    "type": "overlay",
-    "id_name": "155",
-    "code_addr": "0x23ec400",
-    "files": [
-        "testOverlay/main.cpp"
-    ]
-}

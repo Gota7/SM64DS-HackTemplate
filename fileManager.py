@@ -349,7 +349,7 @@ def fs_write_command_list(commands):
                 else:
                     line += " " + c[2]
             if not line in lines: # Prevent duplicates.
-                file.write(line)
+                file.write(line + "\n")
                 lines.append(line)
 
 # Apply a command list.

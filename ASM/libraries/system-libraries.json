@@ -1,0 +1,11 @@
+[
+  {
+    "//COMMENTS": "Load OV0 IDs from custom filename list instead of normal overlay. DO NOT MOVE THIS FUNCTION, IT HAS TO BE DEFINED FIRST IN THE OVERLAY.",
+    "type": "overlay",
+    "id_name": "0",
+    "code_addr": "0x20aa420",
+    "files": [
+        "filenames/main.cpp"
+    ]
+  }
+]

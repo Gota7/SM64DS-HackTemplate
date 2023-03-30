@@ -2,6 +2,7 @@
 # Build the ROM, ASM hacks, overlays, etc.
 #   2022 Gota7.
 #
+import logging
 
 import Lib.ht_common as ht_common
 import Lib.compiler as cc
@@ -16,6 +17,9 @@ from time import sleep
 import zipfile
 
 # Build ROM.
+from utils import load_libraries_definition
+
+
 def build_rom():
     rom_name = ht_common.get_rom_name()
     if not os.path.exists("Base") or not os.path.exists("Conversions") or not os.path.exists(rom_name):
@@ -129,28 +133,42 @@ def clean_arm9():
         os.remove(ov_file_path)
         print("WARNING: Overlays configuration file has been removed, you need to rebuild overlays if custom overlays are used!")
 
-# Build overlays.
-def build_overlays():
 
+# Build overlays.
+def build_libraries():
     # Have to delete build folder for some reason.
-    ov_build_path = os.path.join("ASM", "Overlays", "build")
+    ov_build_path = os.path.join("ASM", "libraries", "build")
     if os.path.exists(ov_build_path):
         shutil.rmtree(ov_build_path)
 
+    base_folder: str = os.path.join("ASM", "libraries")
+
+    # First load the libraries that we will build (overlays&dl)
+    system_libraries = load_libraries_definition(os.path.join(base_folder, "system-libraries.json"))
+    user_libraries = load_libraries_definition(os.path.join(base_folder, "user-libraries.json"))
+
+    excluded: [str] = []
+    for library in (system_libraries + user_libraries):
+        if library['type'] == 'dl':
+            excluded.append(library['id_name'])
+
+    # First get all the commands and filter the element which are not built yet (the dls)
+    command_list = fs.fs_read_command_list().sort(lambda x: x[1] not in excluded)
+
     # Get list of JSON overlays to compile.
+    fs.fs_apply_command_list(command_list)
+
+    for library in user_libraries + system_libraries:
+        cc.compile_overlay(library)
+
     fs.fs_apply_command_list(fs.fs_read_command_list())
-    for file_tuple in os.walk(os.path.join("ASM", "Overlays")):
-        for file in file_tuple[2]:
-            if file.endswith(".json") and file != "filenames.json":
-                cc.compile_overlay(file[0:file.rfind(".")])
-    fs.fs_apply_command_list(fs.fs_read_command_list())
-    if os.path.exists(os.path.join("ASM", "Overlays", "filenames.json")):
-        cc.compile_overlay("filenames")
+
     input("Overlay insertion finished. Press Enter to continue...")
 
+
 # Clean overlays.
-def clean_overlays():
-    build_folder = os.path.join("ASM", "Overlays", "build")
+def clean_libraries():
+    build_folder = os.path.join("ASM", "libraries", "build")
     if os.path.exists(build_folder):
         shutil.rmtree(build_folder)
     ov_path = os.path.join(ht_common.get_rom_name(), "__ROM__", "Arm9")
@@ -171,12 +189,12 @@ def clean_overlays():
 # Build ASM.
 def build_asm():
     build_arm9()
-    build_overlays()
+    build_libraries()
 
 # Clean ASM.
 def clean_asm():
     clean_arm9()
-    clean_overlays()
+    clean_libraries()
 
 # Build all.
 def build_all():
@@ -194,7 +212,7 @@ if __name__ == "__main__":
     print("  2022 Gota7")
     opt = 0
     options = []
-    base_options = [ "all.", "all ASM.", "ARM9 patches.", "overlays.", "ROM." ]
+    base_options = [ "all.", "all ASM.", "ARM9 patches.", "libraries.", "ROM." ]
     for option in base_options:
         options.append("Build " + option)
         options.append("Clean " + option)
@@ -230,9 +248,9 @@ if __name__ == "__main__":
                     build_arm9()
             if base_opt == 3:
                 if spec > 0:
-                    clean_overlays()
+                    clean_libraries()
                 if spec != 1:
-                    build_overlays()
+                    build_libraries()
             if base_opt == 4:
                 if spec > 0:
                     nuke.nuke_build_folder()
