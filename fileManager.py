@@ -18,7 +18,7 @@ def fs_check_folders():
 # Restore from a backup.
 def fs_restore_base():
     fs_check_folders()
-    shutil.copyfile(os.path.join("ASM", "Overlays", "filenames", "filenamesBak.h"), os.path.join("ASM", "Overlays", "filenames", "filenames.h"))
+    shutil.copyfile(os.path.join("ASM", "libraries", "filenames", "filenamesBak.h"), os.path.join("ASM", "libraries", "filenames", "filenames.h"))
     shutil.copyfile(os.path.join("Base", "__ROM__", "files.txt"), os.path.join(ht_common.get_rom_name(), "__ROM__", "files.txt"))
 
 # Fetch a file from the filesystem.
@@ -115,7 +115,7 @@ def fs_write_filelist(files):
 
 # Get a list of OV0 and file path values.
 def fs_get_ov0_filename_tuples():
-    def_file = open(os.path.join("ASM", "Overlays", "filenames", "filenames.h"), "r")
+    def_file = open(os.path.join("ASM", "libraries", "filenames", "filenames.h"), "r")
     vals = []
     for line in def_file.readlines():
         if "{0x" in line:
@@ -128,10 +128,10 @@ def fs_get_ov0_filename_tuples():
 # Write a list of OV0 and file path values.
 def fs_set_ov0_filename_tuples(vals):
     vals.sort(key=lambda y: y[0])
-    orig_lines_file = open(os.path.join("ASM", "Overlays", "filenames", "filenamesBak.h"), "r")
+    orig_lines_file = open(os.path.join("ASM", "libraries", "filenames", "filenamesBak.h"), "r")
     orig_lines = orig_lines_file.readlines()
     orig_lines_file.close()
-    def_file = open(os.path.join("ASM", "Overlays", "filenames", "filenames.h"), "w")
+    def_file = open(os.path.join("ASM", "libraries", "filenames", "filenames.h"), "w")
     stop_pos = 0
     for line in orig_lines:
         if "{0x" in line:
@@ -162,7 +162,7 @@ def fs_set_ov0_filename_tuples(vals):
     def_file.close()
 
     # Other one this time.
-    def_file = open(os.path.join("ASM", "Overlays", "filenames", "filenamesWhole.h"), "w")
+    def_file = open(os.path.join("ASM", "libraries", "filenames", "filenamesWhole.h"), "w")
     def_file.write("#ifndef FILENAMES_H\n")
     def_file.write("#define FILENAMES_H\n")
     def_file.write("\n")

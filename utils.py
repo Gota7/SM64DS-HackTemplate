@@ -34,7 +34,7 @@ def load_libraries_definition(filename: str):
             parent = path.parent
             for file in files:
                 children = parent.joinpath(file)
-                if children.exists() or not children.is_file():
-                    raise Exception("The files definition '{file}' does not exist or is not a file.")
+                if not children.exists() or not children.is_file():
+                    raise Exception(f"The files definition '{children}' does not exist or is not a file.")
         return parsed_content
 

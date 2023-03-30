@@ -153,7 +153,8 @@ def build_libraries():
             excluded.append(library['id_name'])
 
     # First get all the commands and filter the element which are not built yet (the dls)
-    command_list = fs.fs_read_command_list().sort(lambda x: x[1] not in excluded)
+    command_list = fs.fs_read_command_list()
+    command_list.sort(key=lambda x: x[1] not in excluded)
 
     # Get list of JSON overlays to compile.
     fs.fs_apply_command_list(command_list)
