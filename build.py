@@ -259,7 +259,7 @@ if __name__ == "__main__":
     is_interactive = args.interactive
 
     if not is_interactive:
-        handle_arguments(args.build, args.clean, args.auto_boot, args.ship_with_xdelta)
+        handle_arguments(args.clean, args.build, args.auto_boot, args.ship_with_xdelta)
         exit(0)
 
     opt = 0
