@@ -33,8 +33,8 @@ def gen_ninja_file(src_folder, cpp_files, c_files, s_files, build_folder, code_a
     # Define rules.
     base_path = ht_common.get_abs_dir("ASM").replace("\\", "/")
     include_path = ht_common.get_abs_dir(os.path.join("ASM", "include")).replace("\\", "/")
-    symbols_x = ht_common.get_abs_dir(os.path.join("ASM", "Overlays")).replace("\\", "/") + "/symbols.x"
-    linker_x = ht_common.get_abs_dir(os.path.join("ASM", "Overlays")).replace("\\", "/") + "/linker.x"
+    symbols_x = ht_common.get_abs_dir(os.path.join("ASM", "libraries")).replace("\\", "/") + "/symbols.x"
+    linker_x = ht_common.get_abs_dir(os.path.join("ASM", "libraries")).replace("\\", "/") + "/linker.x"
     newcode_map = build_folder + "/newcode.map"
     lib_path = base_path + "/toolchain/ff-gcc/lib/gcc/arm-none-eabi/10.3.1"
     buildfile.append("rule cxx\n")
@@ -87,12 +87,13 @@ def gen_ninja_file(src_folder, cpp_files, c_files, s_files, build_folder, code_a
     buildfile.append("build " + build_folder + "/newcode.bin: make_bin " + build_folder + "/newcode.elf\n")
 
     # Save the build file.
-    ninja_file = open(os.path.join("ASM", "Overlays", "build.ninja"), "w")
+    ninja_file = open(os.path.join("ASM", "libraries", "build.ninja"), "w")
     ninja_file.writelines(buildfile)
     ninja_file.close()
 
+
 # Compile an overlay.
-def compile_overlay(ov_name):
+def compile_overlay(library_definition):
 
     # Get symbols from 9x first.
     symbols_file_path = os.path.join("ASM", "symbols9.x")
@@ -115,34 +116,27 @@ def compile_overlay(ov_name):
                 if not symbol_name.startswith(".") and not "*ABS*" in symbol_name:
                     addr = int(data[0], 16)
                     symbols += symbol_name + "\t\t\t = " + hex(addr) + ";\n"
-        symbols_file_path = os.path.join("ASM", "Overlays", "symbols.x")
+        symbols_file_path = os.path.join("ASM", "libraries", "symbols.x")
         symbols_file = open(symbols_file_path, "w")
         symbols_file.writelines(symbols)
         symbols_file.close()
 
     # First, get the settings.
-    ov_folder = os.path.join("ASM", "Overlays")
-    ov_settings_path = os.path.join(ov_folder, ov_name + ".json")
-    if not os.path.exists(ov_settings_path):
-        print("ERR: Overlay settings file does not exist!")
-        exit(0)
-    ov_settings_file = open(ov_settings_path, "r")
-    ov_settings = json.loads(ov_settings_file.read())
-    ov_settings_file.close()
+    ov_folder = os.path.join("ASM", "libraries")
 
     # Parse settings.
-    type = ov_settings["type"]
-    id_name = ov_settings["id_name"]
+    type = library_definition["type"]
+    id_name = library_definition["id_name"]
     code_addr = 0x02400000
     is_overlay = type == "overlay"
     if is_overlay:
-        code_addr = int(ov_settings["code_addr"][2:], 16)
+        code_addr = int(library_definition["code_addr"][2:], 16)
 
     # Get files.
     cpp_files = []
     c_files = []
     s_files = []
-    for file in ov_settings["files"]:
+    for file in library_definition["files"]:
         if file.endswith(".cpp"):
             cpp_files.append(file)
         elif file.endswith(".c"):
@@ -184,7 +178,7 @@ def compile_overlay(ov_name):
                 init_loc = int(line[0:8], 16)
                 break
         if init_loc == -1:
-            print("WARN: Can not find init function for " + ov_name + "!")
+            print(f"WARN: Can not find init function for {library_definition['type']} with id_name {library_definition['id_name']}")
             init_loc = 0
 
         # Get newcode and save overlay.
@@ -259,9 +253,9 @@ def compile_overlay(ov_name):
                 cleanup_loc = int(line[0:8], 16)
         if init_loc == -1 or cleanup_loc == -1:
             if init_loc == -1:
-                print("ERR: Can not find init function for " + ov_name + "!")
+                print(f"ERR: Can not find init function for {library_definition['type']} with id_name {library_definition['id_name']}")
             if cleanup_loc == -1:
-                print("ERR: Can not find cleanup function for " + ov_name + "!")
+                print(f"ERR: Can not find cleanup function for {library_definition['type']} with id_name {library_definition['id_name']}")
             exit(0)
         init_off = init_loc - code_addr + 0x10
         cleanup_off = cleanup_loc - code_addr + 0x10
