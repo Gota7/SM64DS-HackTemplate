@@ -2,6 +2,7 @@
 # For setting up your SM64DS hack.
 #   2022 Gota7.
 #
+import pathlib
 
 import Lib.ht_common as ht_common
 import Lib.xdelta as xdelta
@@ -51,15 +52,15 @@ def extract_base():
     print("Base ROM extracted.")
 
 # Set the ROM name.
-def set_rom_name():
+def set_rom_name() -> str:
     print("Enter the name for your hack (no spaces or .nds): ", end="")
     name = input()
     if name == "" or "." in name or " " in name or "/" in name or "\\" in name or not ht_common.user_yn_prompt("Is this name ok (" + name + ")?"):
-        set_rom_name()
-        return
+        return set_rom_name()
     file = open("romName.txt", "w")
     file.write(name)
     file.close()
+    return name
 
 # Make default patch.
 def make_patch_default():
@@ -163,6 +164,12 @@ def make_romsettings():
     romsettings.close()
     pass
 
+
+def copy_dependencies_romdir(rom_dir: str):
+    shutil.copytree(os.path.join("MOM"), os.path.join(rom_dir, "MOM"), False, None)
+    shutil.copytree(os.path.join("Particles"), os.path.join(rom_dir), False, None, dirs_exist_ok=True)
+
+
 # Main method.
 if __name__ == "__main__":
     print("SM64DS Hack Template Setup:")
@@ -172,7 +179,8 @@ if __name__ == "__main__":
         if check_remove_old_hack():
             make_base_rom()
             extract_base()
-            set_rom_name()
+            rom_name = set_rom_name()
+            copy_dependencies_romdir(rom_name)
             make_patch_default()
             make_romsettings()
             print("Hack has been successfully setup!\nOpen " + ht_common.get_rom_name() + ".romsettings with SM64DSe in the editor folder to get started!")
@@ -184,7 +192,8 @@ if __name__ == "__main__":
                 print("ERR: Given NDS path for hack doesn't exist!")
                 exit(0)
             extract_base()
-            set_rom_name()
+            rom_name = set_rom_name()
+            copy_dependencies_romdir(rom_name)
             make_patch(hack_nds)
             make_romsettings()
             print("Hack has been successfully setup!\nOpen " + ht_common.get_rom_name() + ".romsettings with SM64DSe in the editor folder to get started!")
@@ -202,7 +211,8 @@ if __name__ == "__main__":
                 print("ERR: Given NDS path for hack doesn't exist!")
                 exit(0)
             extract_base()
-            set_rom_name()
+            rom_name = set_rom_name()
+            copy_dependencies_romdir(rom_name)
             make_patch(hack_nds)
             make_romsettings()
             print("Hack has been successfully setup!\nOpen " + ht_common.get_rom_name() + ".romsettings with SM64DSe in the editor folder to get started!")

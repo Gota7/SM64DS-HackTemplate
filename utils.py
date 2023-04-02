@@ -1,6 +1,10 @@
 import json
 import pathlib
 import collections.abc
+import os
+import shutil
+import fnmatch
+
 
 error_template = "The library definition at index {index} does not have the '{field}' field. "
 
@@ -38,3 +42,42 @@ def load_libraries_definition(filename: str):
                     raise Exception(f"The files definition '{children}' does not exist or is not a file.")
         return parsed_content
 
+
+def copy_with_ignore(source_folder, destination_folder):
+    """
+    Copy files and directories from source folder to destination folder,
+    ignoring any paths specified in a .ignore file in the source folder.
+    """
+    # Load ignore patterns from .ignore file
+    ignore_patterns = []
+    ignore_file = os.path.join(source_folder, ".ignore")
+    if os.path.exists(ignore_file):
+        with open(ignore_file, "r") as f:
+            ignore_patterns = [line.strip() for line in f.readlines() if
+                               line.strip() and not line.strip().startswith('#')]
+
+    print("ignore_patterns", ignore_patterns)
+
+    # Walk through the source folder, copying files and directories
+    for root, dirs, files in os.walk(source_folder):
+        # Check if current directory should be ignored
+        relative_path = os.path.relpath(root, source_folder)
+        if any(pattern[-1] == "/" and relative_path.startswith(pattern[:-1]) for pattern in ignore_patterns):
+            print("ignored", relative_path)
+            continue
+
+        # Create corresponding directory in destination folder
+        dest_dir = os.path.join(destination_folder, relative_path)
+        os.makedirs(dest_dir, exist_ok=True)
+
+        # Copy non-ignored files to destination folder
+        for filename in files:
+            if any(fnmatch.fnmatchcase(filename, pattern) for pattern in ignore_patterns):
+                continue
+
+            if filename == ".ignore":
+                continue
+
+            source_file = os.path.join(root, filename)
+            dest_file = os.path.join(dest_dir, filename)
+            shutil.copy2(source_file, dest_file)

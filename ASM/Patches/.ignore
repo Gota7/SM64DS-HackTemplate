@@ -1,0 +1,9 @@
+# This file is used to ignore some of the Patches.
+# To ignore a directory simply write the name of the directoy in the Patches folder following with an "/"
+# To ignore a file, simply write the name of the file
+
+# To keep the default Title Screen, uncomment the following line
+title/
+
+# To keep the Opening cutscenes, uncomment the following line
+skipOpeningCutscene.s
