@@ -2,7 +2,7 @@
 # Build the ROM, ASM hacks, overlays, etc.
 #   2022 Gota7.
 #
-import logging
+import argparse
 
 import Lib.ht_common as ht_common
 import Lib.compiler as cc
@@ -117,7 +117,6 @@ def build_arm9():
 
     # Build a sample ROM for testing without assets if needed.
     ht_common.call_program(os.path.join("toolchain", "Fireflower", "nds-build.exe") + " build_rules.txt " + os.path.join("fireflower_data", "Sample.nds"), "ASM")
-    input("ARM9 patches finished. Press Enter to continue...")
 
 # Clean ARM9.
 def clean_arm9():
@@ -164,8 +163,6 @@ def build_libraries():
 
     fs.fs_apply_command_list(fs.fs_read_command_list())
 
-    input("Overlay insertion finished. Press Enter to continue...")
-
 
 # Clean overlays.
 def clean_libraries():
@@ -207,13 +204,67 @@ def clean_all():
     clean_asm()
     nuke.nuke_build_folder()
 
+
+def handle_arguments(clean_target: str, build_target: str, auto_boot: bool | None, ship_with_xdelta: bool):
+    if auto_boot is not None:
+        if auto_boot:
+            file = open(os.path.join("InstallFiles", "autoBoot"), "w")
+            file.close()
+            print("Build: ROM autostart enabled.")
+        else:
+            os.remove(os.path.join("InstallFiles", "autoBoot"))
+            print("Build: ROM autostart disabled.")
+
+    if clean_target == "all":
+        clean_all()
+    elif clean_target == "asm":
+        clean_asm()
+    elif clean_target == "ARM9-patches":
+        clean_arm9()
+    elif clean_target == "libraries":
+        clean_libraries()
+    elif clean_target == "ROM":
+        nuke.nuke_build_folder()
+
+    if build_target == "all":
+        build_all()
+    elif build_target == "asm":
+        build_asm()
+    elif build_target == "ARM9-patches":
+        build_arm9()
+    elif build_target == "libraries":
+        build_libraries()
+    elif build_target == "ROM":
+        build_rom()
+
+    if ship_with_xdelta:
+        build_ship()
+
+
 # Main method.
 if __name__ == "__main__":
-    print("SM64DS Hack Template Builder:")
-    print("  2022 Gota7")
+    # create the parser object
+    parser = argparse.ArgumentParser(description='SM64DS Hack Template Builder, by Gota7.')
+
+    base_options = ["all", "asm", "ARM9-patches", "libraries", "ROM"]
+    parser.add_argument('--build', dest='build', choices=base_options, help='Will build the given element. Example --build=ROM or --build=all.')
+    parser.add_argument('--clean', dest='clean', choices=base_options, help='Will clean the given element. Example --clean=asm or --clean=all.')
+    parser.add_argument('--auto-boot', type=lambda s: s.lower() in ['true', '1', 't', 'y', 'yes'], default=None, required=False, help='Enable or disable autostart ROM on build (Persistent option). Example --autoBoot=true, or --autoBoot=false')
+    parser.add_argument('--ship-with-xdelta', action='store_true', help='Enable the feature')
+    parser.add_argument('--interactive', type=lambda s: s.lower() in ['true', '1', 't', 'y', 'yes'], default=True, required=False, help='Enable or disable autostart ROM on build (Persistent option). Example --autoBoot=true, or --autoBoot=false')
+
+    # parse the command line arguments
+    args = parser.parse_args()
+
+    is_interactive = args.interactive
+
+    if not is_interactive:
+        handle_arguments(args.clean, args.build, args.auto_boot, args.ship_with_xdelta)
+        exit(0)
+
     opt = 0
     options = []
-    base_options = [ "all.", "all ASM.", "ARM9 patches.", "libraries.", "ROM." ]
+    base_options = ["all.", "all ASM.", "ARM9 patches.", "libraries.", "ROM."]
     for option in base_options:
         options.append("Build " + option)
         options.append("Clean " + option)
