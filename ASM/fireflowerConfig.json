@@ -6,7 +6,7 @@
             "Patches/title"
         ],
 
-        "source": "Patches",
+        "source": "fireflower_data/Patches",
         "filesystem": "fireflower_data/data",
         "output": "fireflower_data/PatchedBase.nds",
         "toolchain": "toolchain",

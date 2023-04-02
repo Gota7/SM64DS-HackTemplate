@@ -17,7 +17,7 @@ from time import sleep
 import zipfile
 
 # Build ROM.
-from utils import load_libraries_definition
+from utils import load_libraries_definition, copy_with_ignore
 
 
 def build_rom():
@@ -79,6 +79,12 @@ def setup_fireflower_for_building():
     if not os.path.exists(path):
         os.mkdir(path)
         ht_common.call_program(os.path.join("ASM", "toolchain", "Fireflower", "nds-extract.exe") + " Base.nds " + os.path.join(path, "data"))
+
+    patch_folder = os.path.join("ASM", "fireflower_data", "Patches")
+    if os.path.exists(patch_folder):
+        shutil.rmtree(patch_folder)
+    copy_with_ignore(os.path.join("ASM", "Patches"), patch_folder)
+
 
 # Build ARM9.
 def build_arm9():
@@ -153,7 +159,7 @@ def build_libraries():
 
     # First get all the commands and filter the element which are not built yet (the dls)
     command_list = fs.fs_read_command_list()
-    command_list.sort(key=lambda x: x[1] not in excluded)
+    command_list = [x for x in command_list if x[1] not in excluded]
 
     # Get list of JSON overlays to compile.
     fs.fs_apply_command_list(command_list)
